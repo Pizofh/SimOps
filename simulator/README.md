@@ -1,45 +1,45 @@
 # Simulator
 
-Servicio Python separado para generar eventos operativos simulados y enviarlos al backend de SimOps.
+Standalone Python service that generates simulated operational events and sends them to the SimOps backend.
 
-## Alcance de esta fase
+## Scope of this phase
 
-- envio periodico de eventos al backend
-- soporte para varios `service_name`
-- fallos aleatorios controlados por `FAILURE_RATE`
-- bursts opcionales controlados por `BURST_RATE`
-- latencia aleatoria configurable
-- logs estructurados JSON
+* periodic event delivery to the backend
+* support for multiple `service_name` values
+* random failures controlled by `FAILURE_RATE`
+* optional bursts controlled by `BURST_RATE`
+* configurable random latency
+* structured JSON logging
 
-## Variables de entorno
+## Environment variables
 
-- `API_URL`
-- `EVENT_INTERVAL_SECONDS`
-- `FAILURE_RATE`
-- `BURST_RATE`
-- `BURST_MIN_SIZE`
-- `BURST_MAX_SIZE`
-- `SERVICE_NAMES`
-- `ENVIRONMENT`
-- `SOURCE`
-- `REQUEST_TIMEOUT_SECONDS`
-- `MAX_RANDOM_DELAY_MS`
+* `API_URL`
+* `EVENT_INTERVAL_SECONDS`
+* `FAILURE_RATE`
+* `BURST_RATE`
+* `BURST_MIN_SIZE`
+* `BURST_MAX_SIZE`
+* `SERVICE_NAMES`
+* `ENVIRONMENT`
+* `SOURCE`
+* `REQUEST_TIMEOUT_SECONDS`
+* `MAX_RANDOM_DELAY_MS`
 
-Referencia inicial:
+Initial reference:
 
-- `simulator/.env.example`
+* `simulator/.env.example`
 
-## Comandos esperados
+## Expected commands
 
-Ejecutar desde `simulator/`.
+Run from the `simulator/` directory.
 
-Instalacion:
+Install:
 
 ```bash
 pip install -e .[dev]
 ```
 
-Ejecutar simulator:
+Run simulator:
 
 ```bash
 python -m app.main
@@ -50,4 +50,3 @@ Tests:
 ```bash
 pytest
 ```
-
