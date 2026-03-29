@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "simops-backend"
+version = "0.1.0"
+description = "SimOps backend API"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.111,<1.0",
+  "uvicorn>=0.30,<1.0",
+  "sqlalchemy>=2.0,<3.0",
+  "alembic>=1.13,<2.0",
+  "psycopg[binary]>=3.1,<4.0",
+  "pydantic-settings>=2.2,<3.0",
+  "prometheus-client>=0.20,<1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "bandit>=1.7,<2.0",
+  "httpx>=0.27,<1.0",
+  "pip-audit>=2.7,<3.0",
+  "pytest>=8.0,<9.0",
+  "ruff>=0.4,<1.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = ["alembic"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N"]
+
+[tool.bandit]
+exclude_dirs = ["tests", "alembic"]
+

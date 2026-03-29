@@ -1,0 +1,109 @@
+Metadata-Version: 2.4
+Name: simops-backend
+Version: 0.1.0
+Summary: SimOps backend API
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi<1.0,>=0.111
+Requires-Dist: uvicorn<1.0,>=0.30
+Requires-Dist: sqlalchemy<3.0,>=2.0
+Requires-Dist: alembic<2.0,>=1.13
+Requires-Dist: psycopg[binary]<4.0,>=3.1
+Requires-Dist: pydantic-settings<3.0,>=2.2
+Requires-Dist: prometheus-client<1.0,>=0.20
+Provides-Extra: dev
+Requires-Dist: bandit<2.0,>=1.7; extra == "dev"
+Requires-Dist: httpx<1.0,>=0.27; extra == "dev"
+Requires-Dist: pip-audit<3.0,>=2.7; extra == "dev"
+Requires-Dist: pytest<9.0,>=8.0; extra == "dev"
+Requires-Dist: ruff<1.0,>=0.4; extra == "dev"
+
+# Backend
+
+Backend monolítico de SimOps implementado con FastAPI, SQLAlchemy, Alembic, Pydantic y Uvicorn.
+
+## Alcance de esta fase
+
+- modelo `Event`
+- endpoints del MVP backend
+- conexión SQLAlchemy
+- migración inicial Alembic
+- métricas Prometheus
+- logs estructurados JSON
+- tests mínimos con Pytest
+
+## Estructura
+
+```text
+backend/
+  app/
+    config.py
+    crud.py
+    database.py
+    enums.py
+    logging_config.py
+    main.py
+    metrics.py
+    middleware.py
+    models.py
+    schemas.py
+    routers/
+      events.py
+      ops.py
+  alembic/
+    env.py
+    versions/
+  tests/
+```
+
+## Variables de entorno
+
+- `SIMOPS_DATABASE_URL`
+- `SIMOPS_LOG_LEVEL`
+- `SIMOPS_ENVIRONMENT`
+- `SIMOPS_DEFAULT_QUERY_LIMIT`
+- `SIMOPS_MAX_QUERY_LIMIT`
+
+Referencia inicial:
+
+- `backend/.env.example`
+
+## Comandos esperados
+
+Ejecutar desde `backend/`.
+
+Instalación:
+
+```bash
+pip install -e .[dev]
+```
+
+Migraciones:
+
+```bash
+alembic upgrade head
+```
+
+Ejecutar API:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+Tests:
+
+```bash
+pytest
+```
+
+Lint:
+
+```bash
+ruff check .
+```
+
+Bandit:
+
+```bash
+bandit -r app
+```
