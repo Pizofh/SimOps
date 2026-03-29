@@ -1,20 +1,20 @@
 # SimOps
 
-SimOps es una plataforma ligera de ingestión de eventos operativos pensada como proyecto de portafolio DevOps jr-mid. El foco del proyecto no es la complejidad funcional, sino demostrar operabilidad, despliegue reproducible, observabilidad, calidad técnica y buenas prácticas de ingeniería con un alcance realista.
+SimOps is a lightweight operational event ingestion platform designed as a DevOps junior–mid portfolio project. The focus of the project is not functional complexity, but demonstrating operability, reproducible deployment, observability, technical quality, and good engineering practices within a realistic scope.
 
-## Objetivo
+## Objective
 
-El sistema permite:
+The system allows:
 
-- generar eventos simulados desde un servicio separado
-- recibir eventos mediante una API backend
-- persistirlos en PostgreSQL
-- consultarlos desde un frontend mínimo
-- exponer métricas para Prometheus
-- centralizar logs en Loki mediante Promtail
-- visualizar métricas y logs en Grafana
+* generating simulated events from a separate service
+* receiving events through a backend API
+* persisting them in PostgreSQL
+* querying them from a minimal frontend
+* exposing metrics for Prometheus
+* centralizing logs in Loki via Promtail
+* visualizing metrics and logs in Grafana
 
-## Arquitectura propuesta
+## Proposed Architecture
 
 ```text
 frontend  -->  backend  -->  postgres
@@ -25,27 +25,27 @@ backend logs --------------> promtail --> loki --> grafana
 simulator logs ------------> promtail --> loki --> grafana
 ```
 
-## Principios de diseño
+## Design Principles
 
-- Backend monolítico y sobrio: una sola API FastAPI.
-- Separación clara de componentes: frontend, backend, simulador, base de datos y observabilidad.
-- Docker Compose como entorno principal de desarrollo y demo.
-- Configuración por entorno con variables de entorno.
-- Listo para una fase futura de Kubernetes, pero sin sobreinvertir en ello ahora.
-- Seguridad y calidad básicas desde el inicio: linting, tests, SAST, audit y healthchecks.
+* Monolithic and simple backend: a single FastAPI API.
+* Clear separation of components: frontend, backend, simulator, database, and observability.
+* Docker Compose as the main development and demo environment.
+* Environment-based configuration using environment variables.
+* Ready for a future Kubernetes phase, but without overinvesting in it now.
+* Basic security and quality from the start: linting, tests, SAST, audit, and health checks.
 
 ## Stack
 
-- Backend: FastAPI, SQLAlchemy, Alembic, Pydantic, Uvicorn
-- Frontend: Vue 3, Vite, ESLint
-- Base de datos: PostgreSQL
-- Simulator: Python
-- Observabilidad: Prometheus, Grafana, Loki, Promtail
-- Calidad y seguridad: Ruff, Pytest, Bandit, pip-audit, Semgrep opcional
-- Contenedores: Docker, Docker Compose
-- CI: GitHub Actions
+* Backend: FastAPI, SQLAlchemy, Alembic, Pydantic, Uvicorn
+* Frontend: Vue 3, Vite, ESLint
+* Database: PostgreSQL
+* Simulator: Python
+* Observability: Prometheus, Grafana, Loki, Promtail
+* Quality and security: Ruff, Pytest, Bandit, pip-audit, optional Semgrep
+* Containers: Docker, Docker Compose
+* CI: GitHub Actions
 
-## Estructura del repositorio
+## Repository Structure
 
 ```text
 SimOps/
@@ -78,55 +78,54 @@ SimOps/
   README.md
 ```
 
-## MVP obligatorio
+## Required MVP
 
-El MVP queda aceptado cuando se cumpla lo siguiente:
+The MVP is considered complete when the following is met:
 
-1. `POST /events` valida y persiste eventos.
-2. `GET /events` lista eventos con filtros simples.
-3. `GET /events/{id}` devuelve detalle y maneja `404`.
-4. `GET /health` responde salud básica.
-5. `GET /ready` valida conectividad con PostgreSQL.
-6. `GET /metrics` expone métricas Prometheus.
-7. PostgreSQL persiste eventos de manera reproducible.
-8. El simulador envía eventos periódicamente al backend.
-9. El frontend muestra eventos, filtros y detalle simple.
-10. Docker Compose levanta todo el entorno.
-11. Prometheus scrapea el backend.
-12. Loki recibe logs mediante Promtail.
-13. Grafana muestra dashboards básicos.
-14. El pipeline CI ejecuta lint, tests, SAST, audit y verificación de build.
+1. `POST /events` validates and persists events.
+2. `GET /events` lists events with simple filters.
+3. `GET /events/{id}` returns details and handles `404`.
+4. `GET /health` responds with basic health status.
+5. `GET /ready` validates connectivity with PostgreSQL.
+6. `GET /metrics` exposes Prometheus metrics.
+7. PostgreSQL persistently stores events in a reproducible way.
+8. The simulator periodically sends events to the backend.
+9. The frontend displays events, filters, and basic details.
+10. Docker Compose brings up the entire environment.
+11. Prometheus scrapes the backend.
+12. Loki receives logs via Promtail.
+13. Grafana displays basic dashboards.
+14. The CI pipeline runs lint, tests, SAST, audit, and build verification.
 
-## Roadmap por fases
+## Roadmap by Phases
 
-- Fase 1: diseño técnico y estructura del repo
-- Fase 2: backend funcional con DB, métricas, logs y tests mínimos
-- Fase 3: simulador configurable por variables de entorno
-- Fase 4: frontend mínimo con lista, filtros y detalle
-- Fase 5: dockerización y Docker Compose
-- Fase 6: observabilidad con Prometheus, Loki, Promtail y Grafana
-- Fase 7: pipeline CI en GitHub Actions
-- Fase 8: hardening básico, documentación final y preparación liviana para Kubernetes
+* Phase 1: technical design and repository structure
+* Phase 2: functional backend with DB, metrics, logs, and minimal tests
+* Phase 3: simulator configurable via environment variables
+* Phase 4: minimal frontend with list, filters, and detail
+* Phase 5: containerization and Docker Compose
+* Phase 6: observability with Prometheus, Loki, Promtail, and Grafana
+* Phase 7: CI pipeline in GitHub Actions
+* Phase 8: basic hardening, final documentation, and lightweight Kubernetes preparation
 
-## Buenas prácticas Git sugeridas
+## Suggested Git Best Practices
 
-- `main` protegida
-- trabajo en ramas `feature/*`
-- cambios vía Pull Request
-- checks obligatorios antes de merge
-- squash merge para mantener historial legible
+* protected `main` branch
+* work in `feature/*` branches
+* changes via Pull Requests
+* mandatory checks before merge
+* squash merge to keep history readable
 
-## Riesgos de sobreingeniería que vamos a evitar
+## Overengineering Risks to Avoid
 
-- microservicios de negocio
-- colas o brokers desde el inicio
-- autenticación compleja
-- Terraform inicial
-- GitOps inicial
-- frontend recargado
-- patrones de abstracción innecesarios
+* business microservices
+* queues or brokers from the start
+* complex authentication
+* initial Terraform setup
+* initial GitOps setup
+* overly complex frontend
+* unnecessary abstraction patterns
 
-## Estado actual
+## Current Status
 
-La Fase 1 quedó documentada y el repositorio fue inicializado con Git. La implementación empieza en la siguiente fase.
-
+Phase 1 has been documented and the repository has been initialized with Git. Implementation begins in the next phase.
