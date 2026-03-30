@@ -45,6 +45,7 @@ backend/
 - `SIMOPS_DATABASE_URL`
 - `SIMOPS_LOG_LEVEL`
 - `SIMOPS_ENVIRONMENT`
+- `SIMOPS_CORS_ORIGINS`
 - `SIMOPS_DEFAULT_QUERY_LIMIT`
 - `SIMOPS_MAX_QUERY_LIMIT`
 
@@ -52,6 +53,12 @@ Recommended local database URL when PostgreSQL is started through Docker Compose
 
 ```env
 SIMOPS_DATABASE_URL=postgresql+psycopg://simops:simops@localhost:5432/simops
+```
+
+Recommended local CORS origins for the Vue frontend:
+
+```env
+SIMOPS_CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
 ## Run Locally
@@ -93,4 +100,3 @@ Security scan:
 ```bash
 bandit -r app
 ```
-

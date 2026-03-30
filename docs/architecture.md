@@ -11,13 +11,15 @@ As of the current milestone, the following components are implemented:
 - PostgreSQL running through Docker Compose
 - FastAPI backend for ingestion, querying, health, readiness, and metrics
 - standalone Python simulator for synthetic event generation
+- Vue 3 frontend for browsing recent events
 
-The frontend and observability stack are planned for later phases.
+The observability stack is planned for later phases.
 
 ## Current Runtime Topology
 
 ```text
-simulator -> backend -> postgres
+frontend  -> backend -> postgres
+simulator -> backend
 ```
 
 ## Target Runtime Topology
@@ -35,7 +37,7 @@ simulator logs --> promtail -> loki -> grafana
 
 ## Frontend
 
-Status: planned
+Status: implemented
 
 - Vue 3 + Vite
 - minimal event list and detail view
@@ -114,4 +116,3 @@ The project is intentionally organized so it can later move toward Kubernetes wi
 - GitOps
 - Terraform-first provisioning
 - advanced multi-tenant features
-

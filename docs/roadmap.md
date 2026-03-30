@@ -27,14 +27,15 @@
 - structured JSON logging added
 - minimal simulator tests added
 
-## Next
-
 ## Phase 4: Frontend
 
-- create a minimal Vue 3 + Vite application
-- list events
-- support simple filters
-- show a basic detail panel
+- Vue 3 + Vite frontend implemented
+- event list view added
+- simple filters implemented
+- event detail panel added
+- periodic polling added
+
+## Next
 
 ## Phase 5: Docker and Compose
 
@@ -75,4 +76,3 @@ The MVP is complete when:
 - Loki centralizes logs
 - Grafana visualizes metrics and logs
 - CI validates quality and security checks
-
