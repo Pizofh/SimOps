@@ -14,9 +14,10 @@ class Settings(BaseSettings):
     environment: str = "local"
     log_level: str = "INFO"
     database_url: str = Field(
-        default="postgresql+psycopg://simops@localhost:5432/simops",
+        default="postgresql+psycopg://simops:simops@localhost:5432/simops",
         description="Database connection string for SQLAlchemy.",
     )
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     default_query_limit: int = 50
     max_query_limit: int = 200
 
@@ -24,6 +25,10 @@ class Settings(BaseSettings):
     @classmethod
     def normalize_log_level(cls, value: str) -> str:
         return value.upper()
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
 
 @lru_cache

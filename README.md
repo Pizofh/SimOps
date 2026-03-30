@@ -20,28 +20,26 @@ The project is currently complete through:
 - Phase 1: technical design
 - Phase 2: backend API
 - Phase 3: simulator service
+- Phase 4: frontend UI
 
 The following pieces are not implemented yet:
 
-- frontend
 - full multi-service Docker Compose stack
 - Prometheus, Grafana, Loki, and Promtail configuration
 - CI pipeline
 
-At the moment, PostgreSQL is already available through Docker Compose, while the backend and simulator run as local Python services.
+At the moment, PostgreSQL is already available through Docker Compose, while the backend and simulator run as local Python services and the frontend runs through Vite during development.
 
 ## Current Working Flow
 
 ```text
-simulator -> backend -> postgres
-```
-
-Target architecture for later phases:
-
-```text
 frontend  -> backend -> postgres
 simulator -> backend
+```
 
+Target observability flow for later phases:
+
+```text
 backend /metrics -> prometheus -> grafana
 backend logs ----> promtail -> loki -> grafana
 simulator logs --> promtail -> loki -> grafana
@@ -108,6 +106,22 @@ Default simulator target:
 API_URL=http://localhost:8000/events
 ```
 
+## 4. Run the Frontend
+
+From `frontend/`:
+
+```bash
+npm install
+npm run dev
+```
+
+Example frontend configuration:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000
+VITE_POLL_INTERVAL_MS=10000
+```
+
 ## API Endpoints
 
 - `POST /events`
@@ -158,13 +172,12 @@ SimOps/
 - [docs/data-model.md](C:/Users/steve/Documents/DevsR/docs/data-model.md)
 - [docs/roadmap.md](C:/Users/steve/Documents/DevsR/docs/roadmap.md)
 - [backend/README.md](C:/Users/steve/Documents/DevsR/backend/README.md)
+- [frontend/README.md](C:/Users/steve/Documents/DevsR/frontend/README.md)
 - [simulator/README.md](C:/Users/steve/Documents/DevsR/simulator/README.md)
 
 ## Roadmap
 
-- Phase 4: minimal frontend in Vue 3 + Vite
 - Phase 5: full Dockerfiles and complete Docker Compose orchestration
 - Phase 6: Prometheus, Loki, Promtail, and Grafana
 - Phase 7: CI pipeline
 - Phase 8: basic hardening and final documentation pass
-
