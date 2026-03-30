@@ -1,92 +1,78 @@
-# Roadmap de ejecución
+# Roadmap
 
-## Fase 1: Diseño técnico
+## Completed
 
-- definir estructura del repo
-- documentar arquitectura
-- definir contrato inicial de API
-- definir modelo de datos
-- fijar criterios de aceptación del MVP
+## Phase 1: Technical Design
 
-Entregable: base documental coherente y lista para implementar.
+- repository structure defined
+- architecture documented
+- initial API contract documented
+- initial data model documented
 
-## Fase 2: Backend funcional
+## Phase 2: Backend
 
-- crear app FastAPI
-- configurar SQLAlchemy, Alembic y Pydantic
-- implementar endpoints del MVP
-- conectar PostgreSQL
-- añadir logs estructurados
-- exponer métricas Prometheus
-- crear tests mínimos con Pytest
+- FastAPI application implemented
+- SQLAlchemy, Alembic, and Pydantic configured
+- event ingestion and query endpoints implemented
+- health, readiness, and metrics endpoints implemented
+- structured JSON logging added
+- minimal backend tests added
 
-Entregable: API funcional y testeada.
+## Phase 3: Simulator
 
-## Fase 3: Simulator
+- standalone Python simulator implemented
+- environment-based configuration added
+- periodic event delivery implemented
+- random failures, latency, and burst generation implemented
+- structured JSON logging added
+- minimal simulator tests added
 
-- crear servicio Python separado
-- configurar variables de entorno
-- enviar eventos periódicos al backend
-- simular fallos, latencia y bursts
-- emitir logs estructurados
+## Next
 
-Entregable: generador de carga/eventos reproducible.
+## Phase 4: Frontend
 
-## Fase 4: Frontend mínimo
+- create a minimal Vue 3 + Vite application
+- list events
+- support simple filters
+- show a basic detail panel
 
-- crear app Vue 3 + Vite
-- listar eventos
-- añadir filtros simples
-- mostrar resumen y detalle
+## Phase 5: Docker and Compose
 
-Entregable: UI mínima para demostrar consumo de API.
+- add Dockerfiles for backend, frontend, and simulator
+- extend Compose beyond PostgreSQL
+- connect application services with health checks
 
-## Fase 5: Docker + Compose
+## Phase 6: Observability
 
-- dockerizar backend, frontend y simulator
-- definir `docker-compose.yml`
-- conectar DB, observabilidad y app
-- añadir healthchecks
+- configure Prometheus
+- configure Loki and Promtail
+- provision Grafana
+- add starter dashboards
 
-Entregable: entorno local completo levantado con un comando.
+## Phase 7: CI
 
-## Fase 6: Observabilidad
+- add GitHub Actions workflow
+- backend lint, tests, and security checks
+- frontend lint and build verification
+- container build validation
 
-- configurar Prometheus
-- configurar Loki y Promtail
-- provisionar Grafana
-- crear dashboards básicos
+## Phase 8: Basic Hardening
 
-Entregable: métricas y logs visibles en Grafana.
+- non-root containers where practical
+- safer runtime defaults
+- final documentation pass
+- lightweight Kubernetes preparation notes
 
-## Fase 7: CI
+## MVP Definition of Done
 
-- workflow GitHub Actions
-- lint backend
-- tests backend
-- SAST y audit
-- lint frontend
-- verificación de build
+The MVP is complete when:
 
-Entregable: checks obligatorios para PRs.
-
-## Fase 8: Hardening básico
-
-- ejecutar contenedores con usuario no root cuando aplique
-- revisar headers y defaults inseguros
-- mejorar README final
-- dejar notas para futura carpeta `k8s/`
-
-Entregable: cierre de portfolio con mejor señal de madurez operativa.
-
-## Definition of done del MVP
-
-- el sistema levanta completo con Docker Compose
-- el simulador genera tráfico útil
-- el backend persiste y expone eventos
-- el frontend consulta y muestra eventos
-- Prometheus recoge métricas
-- Loki centraliza logs
-- Grafana visualiza ambos
-- CI valida calidad y seguridad básica
+- the backend persists and exposes events
+- the simulator produces useful traffic
+- the frontend can browse events
+- Docker Compose brings up the full local environment
+- Prometheus collects metrics
+- Loki centralizes logs
+- Grafana visualizes metrics and logs
+- CI validates quality and security checks
 

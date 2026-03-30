@@ -1,18 +1,22 @@
 # Backend
 
-Backend monolítico de SimOps implementado con FastAPI, SQLAlchemy, Alembic, Pydantic y Uvicorn.
+The backend is a single FastAPI application responsible for validating, storing, and exposing operational events.
 
-## Alcance de esta fase
+## Implemented Scope
 
-- modelo `Event`
-- endpoints del MVP backend
-- conexión SQLAlchemy
-- migración inicial Alembic
-- métricas Prometheus
-- logs estructurados JSON
-- tests mínimos con Pytest
+- `POST /events`
+- `GET /events`
+- `GET /events/{id}`
+- `GET /health`
+- `GET /ready`
+- `GET /metrics`
+- SQLAlchemy ORM model for `events`
+- Alembic migration support
+- structured JSON logging
+- Prometheus metrics
+- minimal automated tests
 
-## Estructura
+## Structure
 
 ```text
 backend/
@@ -36,7 +40,7 @@ backend/
   tests/
 ```
 
-## Variables de entorno
+## Environment Variables
 
 - `SIMOPS_DATABASE_URL`
 - `SIMOPS_LOG_LEVEL`
@@ -44,35 +48,35 @@ backend/
 - `SIMOPS_DEFAULT_QUERY_LIMIT`
 - `SIMOPS_MAX_QUERY_LIMIT`
 
-Referencia inicial:
+Recommended local database URL when PostgreSQL is started through Docker Compose:
 
-- `backend/.env.example`
-- Si usas PostgreSQL local, `SIMOPS_DATABASE_URL` debe incluir credenciales validas.
-- Si usas la base en Docker Compose, la URL inicial recomendada es `postgresql+psycopg://simops:simops@localhost:5432/simops`.
+```env
+SIMOPS_DATABASE_URL=postgresql+psycopg://simops:simops@localhost:5432/simops
+```
 
-## Comandos esperados
+## Run Locally
 
-Ejecutar desde `backend/`.
+Run from the `backend/` directory.
 
-Instalación:
+Install dependencies:
 
 ```bash
 pip install -e .[dev]
 ```
 
-Migraciones:
+Apply migrations:
 
 ```bash
 alembic upgrade head
 ```
 
-Ejecutar API:
+Start the API:
 
 ```bash
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-Tests:
+Run tests:
 
 ```bash
 pytest
@@ -84,8 +88,9 @@ Lint:
 ruff check .
 ```
 
-Bandit:
+Security scan:
 
 ```bash
 bandit -r app
 ```
+

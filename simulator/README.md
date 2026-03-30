@@ -1,52 +1,65 @@
 # Simulator
 
-Standalone Python service that generates simulated operational events and sends them to the SimOps backend.
+The simulator is a standalone Python service that continuously generates synthetic operational events and sends them to the backend API.
 
-## Scope of this phase
+## Implemented Scope
 
-* periodic event delivery to the backend
-* support for multiple `service_name` values
-* random failures controlled by `FAILURE_RATE`
-* optional bursts controlled by `BURST_RATE`
-* configurable random latency
-* structured JSON logging
+- periodic event generation
+- support for multiple service names
+- configurable failure rate
+- configurable burst rate and burst size
+- configurable random latency before delivery
+- structured JSON logs for successful and failed deliveries
 
-## Environment variables
+## Environment Variables
 
-* `API_URL`
-* `EVENT_INTERVAL_SECONDS`
-* `FAILURE_RATE`
-* `BURST_RATE`
-* `BURST_MIN_SIZE`
-* `BURST_MAX_SIZE`
-* `SERVICE_NAMES`
-* `ENVIRONMENT`
-* `SOURCE`
-* `REQUEST_TIMEOUT_SECONDS`
-* `MAX_RANDOM_DELAY_MS`
+- `API_URL`
+- `EVENT_INTERVAL_SECONDS`
+- `FAILURE_RATE`
+- `BURST_RATE`
+- `BURST_MIN_SIZE`
+- `BURST_MAX_SIZE`
+- `SERVICE_NAMES`
+- `ENVIRONMENT`
+- `SOURCE`
+- `REQUEST_TIMEOUT_SECONDS`
+- `MAX_RANDOM_DELAY_MS`
 
-Initial reference:
+Example configuration:
 
-* `simulator/.env.example`
+```env
+API_URL=http://localhost:8000/events
+EVENT_INTERVAL_SECONDS=5
+FAILURE_RATE=0.25
+BURST_RATE=0.15
+BURST_MIN_SIZE=3
+BURST_MAX_SIZE=6
+SERVICE_NAMES=payments-api,auth-api,inventory-worker
+ENVIRONMENT=lab
+SOURCE=simulator
+REQUEST_TIMEOUT_SECONDS=5
+MAX_RANDOM_DELAY_MS=250
+```
 
-## Expected commands
+## Run Locally
 
 Run from the `simulator/` directory.
 
-Install:
+Install dependencies:
 
 ```bash
 pip install -e .[dev]
 ```
 
-Run simulator:
+Start the simulator:
 
 ```bash
 python -m app.main
 ```
 
-Tests:
+Run tests:
 
 ```bash
 pytest
 ```
+

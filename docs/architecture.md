@@ -1,110 +1,117 @@
-# Arquitectura de SimOps
+# SimOps Architecture
 
-## Visión general
+## Overview
 
-SimOps es una plataforma ligera para recibir, almacenar y visualizar eventos operativos simulados. Está diseñada para demostrar capacidades DevOps de nivel jr-mid con una arquitectura simple, separada y explicable en entrevista.
+SimOps is a lightweight event ingestion platform intended to showcase practical DevOps skills through a small but operationally meaningful system. The architecture favors clarity and reproducibility over business complexity.
 
-## Objetivos de arquitectura
+## Current Implementation
 
-- mostrar integración entre componentes desacoplados
-- habilitar despliegue local reproducible con Docker Compose
-- instrumentar observabilidad real sobre backend y simulador
-- mantener una base lo bastante simple para construirla en tiempo limitado
+As of the current milestone, the following components are implemented:
 
-## Componentes
+- PostgreSQL running through Docker Compose
+- FastAPI backend for ingestion, querying, health, readiness, and metrics
+- standalone Python simulator for synthetic event generation
 
-### Frontend
+The frontend and observability stack are planned for later phases.
 
-- Vue 3 + Vite
-- consume el backend por HTTP
-- lista eventos, aplica filtros simples y muestra detalle
+## Current Runtime Topology
 
-### Backend
-
-- FastAPI como API monolítica
-- SQLAlchemy para acceso a datos
-- Alembic para migraciones
-- Pydantic para validación y contratos
-- expone `/health`, `/ready` y `/metrics`
-- emite logs estructurados JSON
-
-### PostgreSQL
-
-- persistencia principal de eventos
-- un solo esquema al inicio
-- índices simples orientados a consulta reciente y filtros básicos
-
-### Simulator
-
-- servicio Python separado
-- envía eventos periódicos al backend
-- configurable por variables de entorno
-- puede simular fallos, latencia y bursts
-
-### Observabilidad
-
-- Prometheus scrapea métricas del backend
-- Promtail recolecta logs de backend y simulator
-- Loki centraliza logs
-- Grafana unifica visualización de métricas y logs
-
-## Diagrama conceptual
-
-```mermaid
-flowchart LR
-    F[Frontend Vue] --> B[Backend FastAPI]
-    S[Simulator Python] --> B
-    B --> D[(PostgreSQL)]
-    B -->|/metrics| P[Prometheus]
-    P --> G[Grafana]
-    B -->|JSON logs| PT[Promtail]
-    S -->|JSON logs| PT
-    PT --> L[Loki]
-    L --> G
+```text
+simulator -> backend -> postgres
 ```
 
-## Decisiones técnicas clave
+## Target Runtime Topology
 
-## 1. Backend monolítico
+```text
+frontend  -> backend -> postgres
+simulator -> backend
 
-Se elige una sola API para evitar complejidad operativa temprana. Esto mantiene el foco en contenedorización, pipelines, observabilidad y despliegue reproducible.
+backend /metrics -> prometheus -> grafana
+backend logs ----> promtail -> loki -> grafana
+simulator logs --> promtail -> loki -> grafana
+```
 
-## 2. Frontend separado
+## Components
 
-Se separa del backend para demostrar arquitectura cliente-servidor, build independiente y variables por entorno sin convertir el proyecto en una SPA compleja.
+## Frontend
 
-## 3. Simulator separado
+Status: planned
 
-Es importante que el generador de tráfico no viva dentro del backend. Así se demuestra integración entre servicios y se facilita simular comportamiento de sistemas externos.
+- Vue 3 + Vite
+- minimal event list and detail view
+- simple filters for `severity` and `service_name`
 
-## 4. Compose-first
+## Backend
 
-Docker Compose será la forma oficial de levantar el entorno local completo. Esto deja una ruta clara a una futura fase de Kubernetes sin imponer esa complejidad desde el MVP.
+Status: implemented
 
-## 5. Observabilidad real desde el MVP
+- FastAPI monolith
+- SQLAlchemy ORM
+- Alembic migrations
+- Pydantic models
+- structured JSON logging
+- health, readiness, and metrics endpoints
 
-No se deja como mejora futura. El valor del proyecto está precisamente en mostrar métricas, logs centralizados y dashboards básicos en una topología simple.
+## PostgreSQL
 
-## 6. CI de validación, no CD complejo
+Status: implemented
 
-Se prioriza un pipeline que valide calidad, seguridad y build. El despliegue automático a entornos remotos se deja como fase futura opcional.
+- primary persistence store
+- single `events` table for the MVP
+- Docker Compose bootstrap already available
 
-## Preparación para Kubernetes
+## Simulator
 
-No se implementará Kubernetes en el MVP, pero la arquitectura quedará preparada mediante:
+Status: implemented
 
-- servicios separados por responsabilidad
-- configuración por variables de entorno
-- healthchecks compatibles con probes
-- volúmenes y dependencias claramente identificados
-- carpeta futura `k8s/` o `docs/k8s-notes.md` sin dedicarle esfuerzo excesivo ahora
+- separate Python service
+- periodic event delivery
+- random failures
+- burst generation
+- configurable target API and timing
 
-## Decisiones explícitamente descartadas
+## Observability
 
-- microservicios de negocio
-- mensajería asíncrona inicial
-- autenticación y autorización complejas
-- secretos externos o vault desde el inicio
-- IaC pesada para un MVP local
+Status: planned
+
+- Prometheus for metrics scraping
+- Loki for log aggregation
+- Promtail for log shipping
+- Grafana for dashboards
+
+## Design Decisions
+
+## 1. Monolithic backend first
+
+A single API keeps the system understandable and easier to operate while still demonstrating service integration, metrics, logging, migrations, and environment-based configuration.
+
+## 2. Dedicated simulator service
+
+The simulator lives outside the backend to represent an external workload source. This makes the architecture more realistic and creates a clean producer-consumer flow.
+
+## 3. Compose-first local platform
+
+Docker Compose is the target local orchestration model. PostgreSQL has already been moved there because it improves reproducibility and removes machine-specific database drift early.
+
+## 4. Real observability, but not yet
+
+Observability is a core goal of the project, not an optional extra. It is intentionally delayed until the application flow is complete enough to make the dashboards meaningful.
+
+## 5. Kubernetes-ready structure without Kubernetes-first complexity
+
+The project is intentionally organized so it can later move toward Kubernetes with minimal reshaping:
+
+- services are separated by responsibility
+- configuration is environment-driven
+- readiness and health endpoints already exist
+- Compose services can later map to Deployments and Services
+
+## Explicitly Out of Scope for the MVP
+
+- business microservices
+- message brokers
+- complex authentication and authorization
 - GitOps
+- Terraform-first provisioning
+- advanced multi-tenant features
 

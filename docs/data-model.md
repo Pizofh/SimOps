@@ -1,34 +1,34 @@
-# Modelo de datos inicial
+# Data Model
 
-## Entidad principal: Event
+## Primary Entity
 
-El MVP requiere una sola entidad persistida: `events`.
+The current MVP persists a single entity: `events`.
 
-## Tabla `events`
+## Table: `events`
 
-| Campo | Tipo | Nulo | Descripción |
+| Column | Type | Nullable | Description |
 | --- | --- | --- | --- |
-| `id` | UUID | no | Identificador único del evento |
-| `service_name` | VARCHAR(100) | no | Nombre del servicio origen |
-| `severity` | VARCHAR(32) | no | Nivel o tipo principal del evento |
-| `message` | TEXT | no | Descripción del evento |
-| `environment` | VARCHAR(32) | no | Entorno lógico, por ejemplo `dev`, `lab`, `prod-sim` |
-| `response_time_ms` | INTEGER | sí | Tiempo de respuesta observado |
-| `status_code` | INTEGER | sí | Código HTTP o código simulado |
-| `source` | VARCHAR(64) | sí | Fuente del evento, por ejemplo `simulator` |
-| `metadata` | JSONB | sí | Información adicional flexible |
-| `created_at` | TIMESTAMPTZ | no | Fecha lógica del evento |
-| `ingested_at` | TIMESTAMPTZ | no | Fecha de persistencia en backend |
+| `id` | UUID | no | Unique event identifier |
+| `service_name` | VARCHAR(100) | no | Name of the originating service |
+| `severity` | VARCHAR(32) | no | Event severity or type |
+| `message` | TEXT | no | Event message |
+| `environment` | VARCHAR(32) | no | Logical environment such as `dev`, `lab`, or `prod-sim` |
+| `response_time_ms` | INTEGER | yes | Observed response time |
+| `status_code` | INTEGER | yes | HTTP status code or simulated code |
+| `source` | VARCHAR(64) | yes | Source system, for example `simulator` |
+| `metadata` | JSONB conceptually, JSON in current migration | yes | Flexible additional attributes |
+| `created_at` | TIMESTAMPTZ | no | Logical event creation time |
+| `ingested_at` | TIMESTAMPTZ | no | Backend persistence time |
 
-## Decisiones de modelado
+## Modeling Notes
 
-- `id` será UUID para facilitar demos distribuidas y evitar exponer secuencias.
-- `created_at` representa el tiempo del evento.
-- `ingested_at` representa el tiempo real en que el backend lo guardó.
-- `metadata` se mantiene libre para no sobrediseñar subtablas.
-- `severity` inicia como string validado por aplicación; no hace falta un catálogo separado.
+- `id` is a UUID to avoid predictable sequences and to keep the model friendly to distributed demos.
+- `created_at` represents when the event happened.
+- `ingested_at` represents when the backend stored it.
+- `metadata` remains flexible to avoid premature normalization.
+- `severity` is currently validated at the application layer rather than split into a separate catalog table.
 
-## Severidades iniciales soportadas
+## Supported Severities
 
 - `info`
 - `warning`
@@ -36,21 +36,21 @@ El MVP requiere una sola entidad persistida: `events`.
 - `timeout`
 - `latency_spike`
 
-Nota: el concepto de "burst de errores" se tratará como patrón de generación del simulator, no como una severidad adicional.
+`burst` is not a severity. It is modeled as simulator behavior and represented through metadata.
 
-## Índices iniciales recomendados
+## Current Index Strategy
 
-- índice por `created_at DESC`
-- índice por `severity`
-- índice por `service_name`
-- índice compuesto por `environment, created_at DESC`
+- index on `created_at`
+- index on `severity`
+- index on `service_name`
+- composite index on `environment, created_at`
 
-## Fuera de alcance del MVP
+## Out of Scope for the MVP
 
-- tablas de usuarios
-- tablas de servicios registradas
-- auditoría avanzada
-- retención por políticas
-- particionamiento
-- archivado
+- user tables
+- service registry tables
+- advanced auditing
+- retention policies
+- partitioning
+- archival workflows
 

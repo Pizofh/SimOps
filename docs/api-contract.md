@@ -1,10 +1,10 @@
-# Contrato inicial de API
+# API Contract
 
-Base path inicial: `/`
+Base path: `/`
 
 ## POST /events
 
-Recibe y persiste un evento.
+Accepts and persists an operational event.
 
 ### Request body
 
@@ -14,7 +14,7 @@ Recibe y persiste un evento.
   "severity": "error",
   "message": "Timeout while calling upstream service",
   "environment": "lab",
-  "created_at": "2026-03-28T21:00:00Z",
+  "created_at": "2026-03-30T17:00:00Z",
   "response_time_ms": 1450,
   "status_code": 504,
   "source": "simulator",
@@ -25,63 +25,62 @@ Recibe y persiste un evento.
 }
 ```
 
-### Reglas
+### Validation rules
 
-- `service_name`: requerido, string corto
-- `severity`: requerido, enum `info|warning|error|timeout|latency_spike`
-- `message`: requerido
-- `environment`: requerido
-- `created_at`: opcional, si no se envia el backend usa UTC actual
-- `response_time_ms`: opcional, entero no negativo
-- `status_code`: opcional, entero entre `0` y `999`
-- `source`: opcional
-- `metadata`: opcional, objeto JSON
+- `service_name`: required, short string
+- `severity`: required, one of `info`, `warning`, `error`, `timeout`, `latency_spike`
+- `message`: required
+- `environment`: required
+- `created_at`: optional, defaults to current UTC time if omitted
+- `response_time_ms`: optional, non-negative integer
+- `status_code`: optional, integer from `0` to `999`
+- `source`: optional
+- `metadata`: optional JSON object
 
 ### Responses
 
-- `201 Created`: evento persistido
-- `422 Unprocessable Entity`: payload invalido
+- `201 Created`
+- `422 Unprocessable Entity`
 
 ## GET /events
 
-Lista eventos ordenados por fecha descendente.
+Returns events sorted by `created_at` in descending order.
 
-### Query params
+### Query parameters
 
-- `severity`: opcional
-- `service_name`: opcional
-- `limit`: opcional, por defecto `50`, maximo inicial recomendado `200`
+- `severity`: optional
+- `service_name`: optional
+- `limit`: optional, default `50`, current maximum `200`
 
-### Responses
-
-- `200 OK`
-
-### Response example
+### Example response
 
 ```json
 [
   {
-    "id": "bfed2bb1-7dd5-4c9e-b7ec-393b8c063f56",
+    "id": "28181bc7-1020-41a5-b887-e90629261a23",
     "service_name": "payments-api",
     "severity": "error",
-    "message": "Timeout while calling upstream service",
+    "message": "payments-api returned an upstream error",
     "environment": "lab",
-    "response_time_ms": 1450,
-    "status_code": 504,
+    "response_time_ms": 482,
+    "status_code": 502,
     "source": "simulator",
     "metadata": {
-      "region": "us-east-1",
-      "attempt": 2
+      "generator": "simops-simulator",
+      "batch_size": 1,
+      "batch_index": 1,
+      "simulated_failure": true,
+      "simulated_response_time_ms": 482
     },
-    "created_at": "2026-03-28T21:00:00Z",
-    "ingested_at": "2026-03-28T21:00:01Z"
+    "created_at": "2026-03-30T17:02:23.522449Z",
+    "ingested_at": "2026-03-30T17:02:25.577973Z"
   }
 ]
 ```
 
 ## GET /events/{id}
 
-Devuelve detalle de un evento por `id`.
+Returns a single event by ID.
 
 ### Responses
 
@@ -90,14 +89,9 @@ Devuelve detalle de un evento por `id`.
 
 ## GET /health
 
-Salud basica del proceso.
+Basic process liveness endpoint.
 
-### Uso
-
-- prueba rapida de que el backend esta vivo
-- no depende de la base de datos
-
-### Response example
+### Example response
 
 ```json
 {
@@ -108,19 +102,14 @@ Salud basica del proceso.
 
 ## GET /ready
 
-Readiness del servicio.
-
-### Uso
-
-- verifica conectividad minima con PostgreSQL
-- pensado para `healthcheck` y futura adaptacion a `readinessProbe`
+Readiness endpoint with a minimal database connectivity check.
 
 ### Responses
 
 - `200 OK`
 - `503 Service Unavailable`
 
-### Response examples
+### Example responses
 
 ```json
 {
@@ -138,9 +127,9 @@ Readiness del servicio.
 
 ## GET /metrics
 
-Expone metricas compatibles con Prometheus.
+Exposes Prometheus-compatible metrics.
 
-### Metricas minimas
+### Current metric names
 
 - `total_events_received`
 - `total_events_by_severity`
@@ -149,10 +138,10 @@ Expone metricas compatibles con Prometheus.
 - `backend_up`
 - `errors_total`
 
-## Convenciones operativas
+## Logging Conventions
 
-- logs estructurados JSON
-- `request_id` por request cuando aplique
-- `event_id` en logs de persistencia cuando exista
-- timestamps en UTC
+- structured JSON logs
+- `request_id` when applicable
+- `event_id` when available
+- UTC timestamps
 
