@@ -1,3 +1,5 @@
+name: simops
+
 services:
   db:
     image: postgres:16-alpine
@@ -22,6 +24,76 @@ services:
       retries: 5
       start_period: 10s
 
+  backend:
+    build:
+      context: ./backend
+    container_name: simops-backend
+    restart: unless-stopped
+    environment:
+      SIMOPS_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-simops}:${POSTGRES_PASSWORD:-simops}@db:5432/${POSTGRES_DB:-simops}
+      SIMOPS_LOG_LEVEL: INFO
+      SIMOPS_ENVIRONMENT: docker
+      SIMOPS_CORS_ORIGINS: http://localhost:${FRONTEND_PORT:-8080},http://127.0.0.1:${FRONTEND_PORT:-8080},http://localhost:5173,http://127.0.0.1:5173
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  simulator:
+    build:
+      context: ./simulator
+    container_name: simops-simulator
+    restart: unless-stopped
+    environment:
+      API_URL: http://backend:8000/events
+      EVENT_INTERVAL_SECONDS: ${SIMULATOR_INTERVAL_SECONDS:-5}
+      FAILURE_RATE: ${SIMULATOR_FAILURE_RATE:-0.25}
+      BURST_RATE: ${SIMULATOR_BURST_RATE:-0.15}
+      BURST_MIN_SIZE: ${SIMULATOR_BURST_MIN_SIZE:-3}
+      BURST_MAX_SIZE: ${SIMULATOR_BURST_MAX_SIZE:-6}
+      SERVICE_NAMES: ${SIMULATOR_SERVICE_NAMES:-payments-api,auth-api,inventory-worker}
+      ENVIRONMENT: ${SIMULATOR_ENVIRONMENT:-lab}
+      SOURCE: simulator
+      REQUEST_TIMEOUT_SECONDS: 5
+      MAX_RANDOM_DELAY_MS: ${SIMULATOR_MAX_RANDOM_DELAY_MS:-250}
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: simops-frontend
+    restart: unless-stopped
+    environment:
+      SIMOPS_API_BASE_URL: http://localhost:${BACKEND_PORT:-8000}
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1/health >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
 volumes:
   postgres_data:
-

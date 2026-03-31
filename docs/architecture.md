@@ -2,18 +2,18 @@
 
 ## Overview
 
-SimOps is a lightweight event ingestion platform intended to showcase practical DevOps skills through a small but operationally meaningful system. The architecture favors clarity and reproducibility over business complexity.
+SimOps is a small event ingestion platform intended to showcase practical DevOps foundations: separated services, reproducible local environments, environment-based configuration, migrations, metrics exposure, and clear documentation.
 
 ## Current Implementation
 
-As of the current milestone, the following components are implemented:
+The following components are implemented and wired together locally:
 
-- PostgreSQL running through Docker Compose
-- FastAPI backend for ingestion, querying, health, readiness, and metrics
-- standalone Python simulator for synthetic event generation
-- Vue 3 frontend for browsing recent events
+- PostgreSQL through Docker Compose
+- FastAPI backend for event ingestion and querying
+- standalone Python simulator for traffic generation
+- Vue 3 frontend for browsing events
 
-The observability stack is planned for later phases.
+The observability stack is intentionally deferred to the next phase.
 
 ## Current Runtime Topology
 
@@ -22,12 +22,9 @@ frontend  -> backend -> postgres
 simulator -> backend
 ```
 
-## Target Runtime Topology
+## Target Observability Topology
 
 ```text
-frontend  -> backend -> postgres
-simulator -> backend
-
 backend /metrics -> prometheus -> grafana
 backend logs ----> promtail -> loki -> grafana
 simulator logs --> promtail -> loki -> grafana
@@ -40,8 +37,10 @@ simulator logs --> promtail -> loki -> grafana
 Status: implemented
 
 - Vue 3 + Vite
-- minimal event list and detail view
-- simple filters for `severity` and `service_name`
+- event list
+- simple filters
+- detail panel
+- periodic polling
 
 ## Backend
 
@@ -50,69 +49,70 @@ Status: implemented
 - FastAPI monolith
 - SQLAlchemy ORM
 - Alembic migrations
-- Pydantic models
 - structured JSON logging
 - health, readiness, and metrics endpoints
+- CORS enabled for local frontend development
 
 ## PostgreSQL
 
 Status: implemented
 
-- primary persistence store
-- single `events` table for the MVP
-- Docker Compose bootstrap already available
+- Docker Compose managed
+- persistent volume
+- health check enabled
+- used by both local and containerized backend flows
 
 ## Simulator
 
 Status: implemented
 
-- separate Python service
-- periodic event delivery
+- separate Python workload generator
 - random failures
 - burst generation
-- configurable target API and timing
+- configurable intervals and latency
 
 ## Observability
 
 Status: planned
 
-- Prometheus for metrics scraping
-- Loki for log aggregation
-- Promtail for log shipping
-- Grafana for dashboards
+- Prometheus
+- Loki
+- Promtail
+- Grafana
 
-## Design Decisions
+## Key Design Decisions
 
-## 1. Monolithic backend first
+## 1. Backend monolith first
 
-A single API keeps the system understandable and easier to operate while still demonstrating service integration, metrics, logging, migrations, and environment-based configuration.
+A single backend keeps the system explainable and avoids premature service fragmentation while still covering API design, persistence, metrics, and operational endpoints.
 
-## 2. Dedicated simulator service
+## 2. Separate simulator
 
-The simulator lives outside the backend to represent an external workload source. This makes the architecture more realistic and creates a clean producer-consumer flow.
+The simulator represents an external event source rather than an internal helper. This makes the architecture more realistic and demonstrates inter-service communication.
 
 ## 3. Compose-first local platform
 
-Docker Compose is the target local orchestration model. PostgreSQL has already been moved there because it improves reproducibility and removes machine-specific database drift early.
+Docker Compose is now the canonical local entry point for the application stack. This reduces host drift and makes the project easier to run, demo, and extend.
 
-## 4. Real observability, but not yet
+## 4. Runtime configuration where it matters
 
-Observability is a core goal of the project, not an optional extra. It is intentionally delayed until the application flow is complete enough to make the dashboards meaningful.
+The frontend uses a runtime-generated `config.js` inside the container so that the API base URL can be changed without rebuilding the image. This is a practical pattern for real deployments.
 
-## 5. Kubernetes-ready structure without Kubernetes-first complexity
+## 5. Kubernetes-friendly structure without Kubernetes-first complexity
 
-The project is intentionally organized so it can later move toward Kubernetes with minimal reshaping:
+The project is intentionally organized so it can later move to Kubernetes with limited restructuring:
 
-- services are separated by responsibility
-- configuration is environment-driven
+- services are already separated
+- configuration is environment-based
 - readiness and health endpoints already exist
-- Compose services can later map to Deployments and Services
+- the Compose topology maps cleanly to future Deployments and Services
 
 ## Explicitly Out of Scope for the MVP
 
 - business microservices
 - message brokers
-- complex authentication and authorization
+- complex authentication
 - GitOps
 - Terraform-first provisioning
-- advanced multi-tenant features
+- multi-tenant design
+

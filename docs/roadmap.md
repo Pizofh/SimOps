@@ -35,13 +35,15 @@
 - event detail panel added
 - periodic polling added
 
-## Next
-
 ## Phase 5: Docker and Compose
 
-- add Dockerfiles for backend, frontend, and simulator
-- extend Compose beyond PostgreSQL
-- connect application services with health checks
+- Dockerfile added for backend
+- Dockerfile added for frontend
+- Dockerfile added for simulator
+- PostgreSQL, backend, simulator, and frontend wired in Compose
+- health checks added for core long-running services
+
+## Next
 
 ## Phase 6: Observability
 
@@ -71,8 +73,9 @@ The MVP is complete when:
 - the backend persists and exposes events
 - the simulator produces useful traffic
 - the frontend can browse events
-- Docker Compose brings up the full local environment
+- Docker Compose brings up the full local application environment
 - Prometheus collects metrics
 - Loki centralizes logs
 - Grafana visualizes metrics and logs
 - CI validates quality and security checks
+

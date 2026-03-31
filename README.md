@@ -1,17 +1,6 @@
 # SimOps
 
-SimOps is a lightweight operational event ingestion platform built as a junior-to-mid DevOps portfolio project. Its purpose is to demonstrate reproducible environments, containerized dependencies, operational visibility, engineering quality, and clear technical documentation without introducing unnecessary business complexity.
-
-## What SimOps Does
-
-SimOps is designed to:
-
-- receive simulated operational events through a backend API
-- persist events in PostgreSQL
-- generate synthetic incidents from a dedicated simulator service
-- expose backend metrics for Prometheus
-- emit structured logs that can later be collected by Loki via Promtail
-- provide a minimal UI for browsing events in a future frontend phase
+SimOps is a lightweight operational event ingestion platform built as a junior-to-mid DevOps portfolio project. The goal is to demonstrate reproducible local environments, service separation, engineering quality, and a realistic path toward observability without overengineering the business domain.
 
 ## Current Status
 
@@ -21,23 +10,22 @@ The project is currently complete through:
 - Phase 2: backend API
 - Phase 3: simulator service
 - Phase 4: frontend UI
+- Phase 5: Dockerfiles and full local Docker Compose stack
 
-The following pieces are not implemented yet:
+The following phases are still pending:
 
-- full multi-service Docker Compose stack
-- Prometheus, Grafana, Loki, and Promtail configuration
+- observability stack
 - CI pipeline
+- basic hardening pass
 
-At the moment, PostgreSQL is already available through Docker Compose, while the backend and simulator run as local Python services and the frontend runs through Vite during development.
-
-## Current Working Flow
+## Current Runtime Topology
 
 ```text
 frontend  -> backend -> postgres
 simulator -> backend
 ```
 
-Target observability flow for later phases:
+Planned observability topology for later phases:
 
 ```text
 backend /metrics -> prometheus -> grafana
@@ -48,79 +36,48 @@ simulator logs --> promtail -> loki -> grafana
 ## Tech Stack
 
 - Backend: FastAPI, SQLAlchemy, Alembic, Pydantic, Uvicorn
-- Frontend: Vue 3, Vite
+- Frontend: Vue 3, Vite, ESLint
 - Database: PostgreSQL
 - Simulator: Python, HTTPX
-- Observability target: Prometheus, Grafana, Loki, Promtail
-- Quality and security target: Ruff, Pytest, Bandit, pip-audit, optional Semgrep
 - Containers: Docker, Docker Compose
+- Quality and security target: Ruff, Pytest, Bandit, pip-audit, optional Semgrep
+- Observability target: Prometheus, Grafana, Loki, Promtail
 - CI target: GitHub Actions
 
 ## Quick Start
 
-## 1. Start PostgreSQL
-
-From the repository root:
+Copy `.env.example` to `.env` in the repository root, then start the stack:
 
 ```bash
-docker compose up -d db
+docker compose up --build
 ```
 
-The root environment file should contain:
+Default host ports:
 
-```env
-POSTGRES_DB=simops
-POSTGRES_USER=simops
-POSTGRES_PASSWORD=simops
-POSTGRES_PORT=5432
-```
+- frontend: `http://localhost:8080`
+- backend: `http://localhost:8000`
+- database: `localhost:5434`
 
-## 2. Run the Backend
+The frontend calls the backend through the browser, and the simulator continuously sends events into the API.
 
-From `backend/`:
+## Environment Variables
 
-```bash
-pip install -e .[dev]
-alembic upgrade head
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
+Root Compose variables:
 
-Example backend database URL:
-
-```env
-SIMOPS_DATABASE_URL=postgresql+psycopg://simops:simops@localhost:5432/simops
-```
-
-## 3. Run the Simulator
-
-From `simulator/`:
-
-```bash
-pip install -e .[dev]
-python -m app.main
-```
-
-Default simulator target:
-
-```env
-API_URL=http://localhost:8000/events
-```
-
-## 4. Run the Frontend
-
-From `frontend/`:
-
-```bash
-npm install
-npm run dev
-```
-
-Example frontend configuration:
-
-```env
-VITE_API_BASE_URL=http://localhost:8000
-VITE_POLL_INTERVAL_MS=10000
-```
+- `POSTGRES_DB`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+- `POSTGRES_PORT`
+- `BACKEND_PORT`
+- `FRONTEND_PORT`
+- `SIMULATOR_INTERVAL_SECONDS`
+- `SIMULATOR_FAILURE_RATE`
+- `SIMULATOR_BURST_RATE`
+- `SIMULATOR_BURST_MIN_SIZE`
+- `SIMULATOR_BURST_MAX_SIZE`
+- `SIMULATOR_SERVICE_NAMES`
+- `SIMULATOR_ENVIRONMENT`
+- `SIMULATOR_MAX_RANDOM_DELAY_MS`
 
 ## API Endpoints
 
@@ -143,11 +100,16 @@ SimOps/
     app/
     alembic/
     tests/
+    Dockerfile
   frontend/
+    public/
     src/
+    Dockerfile
+    nginx.conf
   simulator/
     app/
     tests/
+    Dockerfile
   infra/
     prometheus/
     grafana/
@@ -175,9 +137,9 @@ SimOps/
 - [frontend/README.md](C:/Users/steve/Documents/DevsR/frontend/README.md)
 - [simulator/README.md](C:/Users/steve/Documents/DevsR/simulator/README.md)
 
-## Roadmap
+## Next Steps
 
-- Phase 5: full Dockerfiles and complete Docker Compose orchestration
 - Phase 6: Prometheus, Loki, Promtail, and Grafana
 - Phase 7: CI pipeline
 - Phase 8: basic hardening and final documentation pass
+

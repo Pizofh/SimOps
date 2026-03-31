@@ -25,7 +25,7 @@ The simulator is a standalone Python service that continuously generates synthet
 - `REQUEST_TIMEOUT_SECONDS`
 - `MAX_RANDOM_DELAY_MS`
 
-Example configuration:
+Example:
 
 ```env
 API_URL=http://localhost:8000/events
@@ -63,4 +63,13 @@ Run tests:
 pytest
 ```
 
+## Run in Docker Compose
+
+From the repository root:
+
+```bash
+docker compose up --build simulator
+```
+
+In Compose, the simulator targets the backend through the internal service name `backend`.
 

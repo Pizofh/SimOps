@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const runtimeConfig = window.__SIMOPS_CONFIG__ || {};
+const API_BASE_URL = runtimeConfig.apiBaseUrl || import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 function buildUrl(path, params = {}) {
   const url = new URL(path, API_BASE_URL);

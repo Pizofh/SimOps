@@ -14,31 +14,8 @@ The backend is a single FastAPI application responsible for validating, storing,
 - Alembic migration support
 - structured JSON logging
 - Prometheus metrics
+- CORS support for the frontend
 - minimal automated tests
-
-## Structure
-
-```text
-backend/
-  app/
-    config.py
-    crud.py
-    database.py
-    enums.py
-    logging_config.py
-    main.py
-    metrics.py
-    middleware.py
-    models.py
-    schemas.py
-    routers/
-      events.py
-      ops.py
-  alembic/
-    env.py
-    versions/
-  tests/
-```
 
 ## Environment Variables
 
@@ -49,16 +26,11 @@ backend/
 - `SIMOPS_DEFAULT_QUERY_LIMIT`
 - `SIMOPS_MAX_QUERY_LIMIT`
 
-Recommended local database URL when PostgreSQL is started through Docker Compose:
+For local host-based development with PostgreSQL exposed by Docker Compose:
 
 ```env
-SIMOPS_DATABASE_URL=postgresql+psycopg://simops:simops@localhost:5432/simops
-```
-
-Recommended local CORS origins for the Vue frontend:
-
-```env
-SIMOPS_CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+SIMOPS_DATABASE_URL=postgresql+psycopg://simops:simops@localhost:5434/simops
+SIMOPS_CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080
 ```
 
 ## Run Locally
@@ -100,3 +72,14 @@ Security scan:
 ```bash
 bandit -r app
 ```
+
+## Run in Docker Compose
+
+From the repository root:
+
+```bash
+docker compose up --build backend
+```
+
+The container startup command applies the Alembic migration before starting Uvicorn.
+
