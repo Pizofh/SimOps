@@ -95,5 +95,75 @@ services:
       retries: 5
       start_period: 10s
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: simops-prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+
+  loki:
+    image: grafana/loki:latest
+    container_name: simops-loki
+    restart: unless-stopped
+    command:
+      - -config.file=/etc/loki/config.yml
+    volumes:
+      - ./infra/loki/config.yml:/etc/loki/config.yml:ro
+      - loki_data:/loki
+    ports:
+      - "${LOKI_PORT:-3100}:3100"
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: simops-promtail
+    restart: unless-stopped
+    command:
+      - -config.file=/etc/promtail/promtail.yml
+    volumes:
+      - ./infra/promtail/promtail.yml:/etc/promtail/promtail.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      loki:
+        condition: service_started
+      backend:
+        condition: service_started
+      simulator:
+        condition: service_started
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: simops-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./infra/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./infra/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      prometheus:
+        condition: service_started
+      loki:
+        condition: service_started
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+
 volumes:
   postgres_data:
+  prometheus_data:
+  loki_data:
+  grafana_data:

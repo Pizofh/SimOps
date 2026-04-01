@@ -12,22 +12,19 @@ The following components are implemented and wired together locally:
 - FastAPI backend for event ingestion and querying
 - standalone Python simulator for traffic generation
 - Vue 3 frontend for browsing events
-
-The observability stack is intentionally deferred to the next phase.
+- Prometheus for metrics scraping
+- Loki for centralized log storage
+- Promtail for Docker log collection
+- Grafana for dashboards and log exploration
 
 ## Current Runtime Topology
 
 ```text
 frontend  -> backend -> postgres
 simulator -> backend
-```
-
-## Target Observability Topology
-
-```text
 backend /metrics -> prometheus -> grafana
-backend logs ----> promtail -> loki -> grafana
-simulator logs --> promtail -> loki -> grafana
+backend logs ----> promtail -> loki ------> grafana
+simulator logs --> promtail -> loki ------> grafana
 ```
 
 ## Components
@@ -73,12 +70,15 @@ Status: implemented
 
 ## Observability
 
-Status: planned
+Status: implemented
 
 - Prometheus
 - Loki
 - Promtail
 - Grafana
+- starter dashboard provisioning
+- backend metrics scraping
+- backend and simulator log collection via Docker discovery
 
 ## Key Design Decisions
 
@@ -105,6 +105,7 @@ The project is intentionally organized so it can later move to Kubernetes with l
 - services are already separated
 - configuration is environment-based
 - readiness and health endpoints already exist
+- dashboards and scraper configuration are already externalized
 - the Compose topology maps cleanly to future Deployments and Services
 
 ## Explicitly Out of Scope for the MVP
