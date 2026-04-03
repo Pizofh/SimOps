@@ -11,26 +11,16 @@ The project is currently complete through:
 - Phase 3: simulator service
 - Phase 4: frontend UI
 - Phase 5: Dockerfiles and full local Docker Compose stack
-
-The following phases are still pending:
-
-- observability stack
-- CI pipeline
-- basic hardening pass
+- Phase 6: observability stack
 
 ## Current Runtime Topology
 
 ```text
 frontend  -> backend -> postgres
 simulator -> backend
-```
-
-Planned observability topology for later phases:
-
-```text
 backend /metrics -> prometheus -> grafana
-backend logs ----> promtail -> loki -> grafana
-simulator logs --> promtail -> loki -> grafana
+backend logs ----> promtail -> loki ------> grafana
+simulator logs --> promtail -> loki ------> grafana
 ```
 
 ## Tech Stack
@@ -57,8 +47,17 @@ Default host ports:
 - frontend: `http://localhost:8080`
 - backend: `http://localhost:8000`
 - database: `localhost:5434`
+- Prometheus: `http://localhost:9090`
+- Loki: `http://localhost:3100`
+- Grafana: `http://localhost:3000`
 
 The frontend calls the backend through the browser, and the simulator continuously sends events into the API.
+
+Grafana is provisioned automatically with:
+
+- a Prometheus datasource
+- a Loki datasource
+- a starter dashboard named `SimOps Overview`
 
 ## Environment Variables
 
@@ -70,6 +69,11 @@ Root Compose variables:
 - `POSTGRES_PORT`
 - `BACKEND_PORT`
 - `FRONTEND_PORT`
+- `PROMETHEUS_PORT`
+- `LOKI_PORT`
+- `GRAFANA_PORT`
+- `GRAFANA_ADMIN_USER`
+- `GRAFANA_ADMIN_PASSWORD`
 - `SIMULATOR_INTERVAL_SECONDS`
 - `SIMULATOR_FAILURE_RATE`
 - `SIMULATOR_BURST_RATE`
@@ -133,13 +137,13 @@ SimOps/
 - [docs/api-contract.md](C:/Users/steve/Documents/DevsR/docs/api-contract.md)
 - [docs/data-model.md](C:/Users/steve/Documents/DevsR/docs/data-model.md)
 - [docs/roadmap.md](C:/Users/steve/Documents/DevsR/docs/roadmap.md)
+- [infra/README.md](C:/Users/steve/Documents/DevsR/infra/README.md)
 - [backend/README.md](C:/Users/steve/Documents/DevsR/backend/README.md)
 - [frontend/README.md](C:/Users/steve/Documents/DevsR/frontend/README.md)
 - [simulator/README.md](C:/Users/steve/Documents/DevsR/simulator/README.md)
 
 ## Next Steps
 
-- Phase 6: Prometheus, Loki, Promtail, and Grafana
 - Phase 7: CI pipeline
 - Phase 8: basic hardening and final documentation pass
 

@@ -82,4 +82,5 @@ docker compose up --build backend
 ```
 
 The container startup command applies the Alembic migration before starting Uvicorn.
+Prometheus scrapes the backend through `GET /metrics`, and backend logs are available in Loki through Promtail when the observability services are running.
 

@@ -43,14 +43,14 @@
 - PostgreSQL, backend, simulator, and frontend wired in Compose
 - health checks added for core long-running services
 
-## Next
-
 ## Phase 6: Observability
 
-- configure Prometheus
-- configure Loki and Promtail
-- provision Grafana
-- add starter dashboards
+- Prometheus added to Compose
+- Loki and Promtail added to Compose
+- Grafana provisioning added
+- starter dashboard added for metrics and logs
+
+## Next
 
 ## Phase 7: CI
 
