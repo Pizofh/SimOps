@@ -33,7 +33,7 @@ class EventRead(EventBase):
     ingested_at: datetime
 
     @classmethod
-    def from_event(cls, event) -> "EventRead":
+    def from_event(cls, event) -> EventRead:
         return cls(
             id=event.id,
             service_name=event.service_name,

@@ -43,6 +43,7 @@ exclude = ["alembic"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "N"]
+ignore = ["B008"]
 
 [tool.bandit]
 exclude_dirs = ["tests", "alembic"]

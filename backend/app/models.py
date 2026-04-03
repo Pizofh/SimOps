@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, Index, Integer, JSON, String, Text, Uuid
+from sqlalchemy import JSON, DateTime, Index, Integer, String, Text, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -24,6 +24,13 @@ class Event(Base):
     status_code: Mapped[int | None] = mapped_column(Integer, nullable=True)
     source: Mapped[str | None] = mapped_column(String(64), nullable=True)
     event_metadata: Mapped[dict[str, Any] | None] = mapped_column("metadata", JSON, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, index=True)
-    ingested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        index=True
+    )
+    ingested_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now
+    )
 
