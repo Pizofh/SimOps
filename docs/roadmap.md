@@ -50,14 +50,15 @@
 - Grafana provisioning added
 - starter dashboard added for metrics and logs
 
-## Next
-
 ## Phase 7: CI
 
-- add GitHub Actions workflow
-- backend lint, tests, and security checks
-- frontend lint and build verification
-- container build validation
+- GitHub Actions workflow added
+- backend lint and test checks added
+- backend security and dependency audit checks added
+- frontend lint and build verification added
+- Docker Compose validation and application image builds added
+
+## Next
 
 ## Phase 8: Basic Hardening
 

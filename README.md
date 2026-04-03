@@ -12,6 +12,7 @@ The project is currently complete through:
 - Phase 4: frontend UI
 - Phase 5: Dockerfiles and full local Docker Compose stack
 - Phase 6: observability stack
+- Phase 7: CI pipeline
 
 ## Current Runtime Topology
 
@@ -142,8 +143,35 @@ SimOps/
 - [frontend/README.md](C:/Users/steve/Documents/DevsR/frontend/README.md)
 - [simulator/README.md](C:/Users/steve/Documents/DevsR/simulator/README.md)
 
+## CI Pipeline
+
+The repository includes a GitHub Actions workflow at [ci.yml](C:/Users/steve/Documents/DevsR/.github/workflows/ci.yml).
+
+Implemented checks:
+
+- `backend-quality`: installs the backend, runs Ruff, and executes Pytest
+- `backend-security`: runs Bandit and `pip-audit`
+- `frontend-quality`: installs frontend dependencies, runs ESLint, and verifies the production build
+- `docker-build`: validates `docker-compose.yml` and builds the `backend`, `frontend`, and `simulator` images
+
+Recommended Git workflow:
+
+- create short-lived branches such as `feature/<name>`, `fix/<name>`, or `chore/<name>`
+- open pull requests into `main`
+- keep `main` protected and merge only when required checks pass
+
+Recommended branch protection for `main`:
+
+1. Require a pull request before merging.
+2. Require status checks to pass before merging.
+3. Mark these checks as required:
+   - `backend-quality`
+   - `backend-security`
+   - `frontend-quality`
+   - `docker-build`
+4. Optionally require branches to be up to date before merging.
+
 ## Next Steps
 
-- Phase 7: CI pipeline
 - Phase 8: basic hardening and final documentation pass
 
