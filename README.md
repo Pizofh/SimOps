@@ -13,6 +13,7 @@ The project is currently complete through:
 - Phase 5: Dockerfiles and full local Docker Compose stack
 - Phase 6: observability stack
 - Phase 7: CI pipeline
+- Phase 8: basic hardening and final documentation pass
 
 ## Current Runtime Topology
 
@@ -171,8 +172,26 @@ Recommended branch protection for `main`:
    - `docker-build`
 4. Optionally require branches to be up to date before merging.
 
+## Hardening Notes
+
+The current baseline includes:
+
+- non-root application containers for `backend` and `simulator`
+- `no-new-privileges` enabled in Compose
+- read-only root filesystems for `backend` and `simulator`
+- Docker log rotation for all long-running services
+- backend trusted host validation through `SIMOPS_ALLOWED_HOSTS`
+- backend and frontend security headers for common browser protections
+
+Before any shared or internet-exposed deployment, change at least:
+
+- `POSTGRES_PASSWORD`
+- `GRAFANA_ADMIN_PASSWORD`
+- `SIMOPS_ALLOWED_HOSTS`
+
 ## Next Steps
 
-- Phase 8: basic hardening and final documentation pass
+- deploy the stack to a small VM or VPS with Docker Compose
+- add a reverse proxy and TLS for public access
 
 

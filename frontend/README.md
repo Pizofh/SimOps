@@ -68,4 +68,5 @@ docker compose up --build frontend
 ```
 
 The frontend is served by Nginx on port `8080` by default.
+The Nginx config also adds a small set of security headers suitable for this MVP.
 

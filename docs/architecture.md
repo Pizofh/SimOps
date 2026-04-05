@@ -38,6 +38,7 @@ Status: implemented
 - simple filters
 - detail panel
 - periodic polling
+- security headers served by Nginx
 
 ## Backend
 
@@ -49,6 +50,8 @@ Status: implemented
 - structured JSON logging
 - health, readiness, and metrics endpoints
 - CORS enabled for local frontend development
+- trusted host validation
+- common security response headers
 
 ## PostgreSQL
 
@@ -98,15 +101,25 @@ Docker Compose is now the canonical local entry point for the application stack.
 
 The frontend uses a runtime-generated `config.js` inside the container so that the API base URL can be changed without rebuilding the image. This is a practical pattern for real deployments.
 
-## 5. Kubernetes-friendly structure without Kubernetes-first complexity
+## 5. Deployment-friendly structure without platform-first complexity
 
-The project is intentionally organized so it can later move to Kubernetes with limited restructuring:
+The project is intentionally organized so it can move to a small VM or VPS deployment without major restructuring:
 
 - services are already separated
 - configuration is environment-based
 - readiness and health endpoints already exist
 - dashboards and scraper configuration are already externalized
-- the Compose topology maps cleanly to future Deployments and Services
+- the Compose topology maps cleanly to a reverse-proxy-based deployment
+
+## 6. Hardening before platform expansion
+
+The project favors a small but real hardening baseline before adding orchestration complexity:
+
+- restrict allowed host headers in the backend
+- use non-root users where practical
+- prefer read-only filesystems for simple stateless services
+- rotate Docker logs to avoid unbounded local growth
+- document which default credentials must be changed before deployment
 
 ## Explicitly Out of Scope for the MVP
 

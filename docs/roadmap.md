@@ -62,10 +62,16 @@
 
 ## Phase 8: Basic Hardening
 
-- non-root containers where practical
-- safer runtime defaults
-- final documentation pass
-- lightweight Kubernetes preparation notes
+- safer runtime defaults added to Compose
+- trusted host validation added to the backend
+- security headers added to backend and frontend responses
+- Docker log rotation added
+- final documentation pass completed
+
+## Next
+
+- deploy the application to a small VM or VPS
+- add a reverse proxy and TLS
 
 ## MVP Definition of Done
 
