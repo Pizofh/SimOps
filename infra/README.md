@@ -34,3 +34,4 @@ Grafana credentials are controlled through the root `.env` file:
 
 - Promtail currently targets only the `backend` and `simulator` containers to keep the MVP focused on application-level observability.
 - Grafana is provisioned from files so the dashboard setup is reproducible and versioned in Git.
+- Docker log rotation is configured in Compose so observability stays useful without unbounded local log growth.
