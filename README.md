@@ -1,21 +1,8 @@
 # SimOps
 
-SimOps is a lightweight operational event ingestion platform built as a junior-to-mid DevOps portfolio project. The goal is to demonstrate reproducible local environments, service separation, engineering quality, and a realistic path toward observability without overengineering the business domain.
+SimOps is a lightweight operational event ingestion platform built as a DevOps portfolio project. It focuses on reproducible local environments, service separation, migrations, CI, and application-level observability without overengineering the business domain.
 
-## Current Status
-
-The project is currently complete through:
-
-- Phase 1: technical design
-- Phase 2: backend API
-- Phase 3: simulator service
-- Phase 4: frontend UI
-- Phase 5: Dockerfiles and full local Docker Compose stack
-- Phase 6: observability stack
-- Phase 7: CI pipeline
-- Phase 8: basic hardening and final documentation pass
-
-## Current Runtime Topology
+## Runtime Topology
 
 ```text
 frontend  -> backend -> postgres
@@ -25,16 +12,26 @@ backend logs ----> promtail -> loki ------> grafana
 simulator logs --> promtail -> loki ------> grafana
 ```
 
+## What The Project Includes
+
+- FastAPI backend for ingesting and querying operational events
+- Vue 3 frontend for browsing stored events
+- standalone Python simulator that continuously generates traffic
+- PostgreSQL persistence with Alembic migrations
+- Dockerfiles for each application service
+- a full Docker Compose stack for local development and demo environments
+- Prometheus, Loki, Promtail, and Grafana for local observability
+- GitHub Actions CI for quality, security, and container build validation
+
 ## Tech Stack
 
 - Backend: FastAPI, SQLAlchemy, Alembic, Pydantic, Uvicorn
-- Frontend: Vue 3, Vite, ESLint
+- Frontend: Vue 3, Vite, ESLint, Nginx
 - Database: PostgreSQL
 - Simulator: Python, HTTPX
 - Containers: Docker, Docker Compose
-- Quality and security target: Ruff, Pytest, Bandit, pip-audit, optional Semgrep
-- Observability target: Prometheus, Grafana, Loki, Promtail
-- CI target: GitHub Actions
+- Observability: Prometheus, Grafana, Loki, Promtail
+- CI: GitHub Actions
 
 ## Quick Start
 
@@ -44,24 +41,29 @@ Copy `.env.example` to `.env` in the repository root, then start the stack:
 docker compose up --build
 ```
 
-Default host ports:
+Default local endpoints:
 
 - frontend: `http://localhost:8080`
 - backend: `http://localhost:8000`
-- database: `localhost:5434`
+- PostgreSQL: `localhost:5434`
 - Prometheus: `http://localhost:9090`
 - Loki: `http://localhost:3100`
 - Grafana: `http://localhost:3000`
 
+To stop the stack:
+
+```bash
+docker compose down
+```
+
 The frontend calls the backend through the browser, and the simulator continuously sends events into the API.
 
-Grafana is provisioned automatically with:
+## Configuration
 
-- a Prometheus datasource
-- a Loki datasource
-- a starter dashboard named `SimOps Overview`
+The repository includes two environment templates:
 
-## Environment Variables
+- `.env.example`: local development defaults
+- `.env.prod.example`: a deployment-oriented starting point for a small VM or reverse-proxy setup
 
 Root Compose variables:
 
@@ -76,6 +78,7 @@ Root Compose variables:
 - `GRAFANA_PORT`
 - `GRAFANA_ADMIN_USER`
 - `GRAFANA_ADMIN_PASSWORD`
+- `SIMOPS_ALLOWED_HOSTS`
 - `SIMULATOR_INTERVAL_SECONDS`
 - `SIMULATOR_FAILURE_RATE`
 - `SIMULATOR_BURST_RATE`
@@ -85,7 +88,15 @@ Root Compose variables:
 - `SIMULATOR_ENVIRONMENT`
 - `SIMULATOR_MAX_RANDOM_DELAY_MS`
 
-## API Endpoints
+Notes:
+
+- Port variables are passed directly into the Compose port mapping, so they can be either bare ports such as `8080` or bind-address forms such as `127.0.0.1:8080`.
+- The containerized frontend reads `SIMOPS_API_BASE_URL` at runtime, so you can point the same frontend image at a different backend without rebuilding it.
+- If you change the frontend origin for a public deployment, also review the backend CORS configuration in [docker-compose.yml](docker-compose.yml).
+
+## API
+
+Implemented endpoints:
 
 - `POST /events`
 - `GET /events`
@@ -94,59 +105,36 @@ Root Compose variables:
 - `GET /ready`
 - `GET /metrics`
 
-Detailed API documentation:
+Detailed contract:
 
-- [docs/api-contract.md](C:/Users/steve/Documents/DevsR/docs/api-contract.md)
+- [docs/api-contract.md](docs/api-contract.md)
 
-## Repository Structure
+## Observability
 
-```text
-SimOps/
-  backend/
-    app/
-    alembic/
-    tests/
-    Dockerfile
-  frontend/
-    public/
-    src/
-    Dockerfile
-    nginx.conf
-  simulator/
-    app/
-    tests/
-    Dockerfile
-  infra/
-    prometheus/
-    grafana/
-    loki/
-    promtail/
-  docs/
-    architecture.md
-    api-contract.md
-    data-model.md
-    roadmap.md
-  .github/
-    workflows/
-  docker-compose.yml
-  .env.example
-  README.md
-```
+Grafana is provisioned automatically with:
 
-## Documentation
+- a Prometheus datasource
+- a Loki datasource
+- the `SimOps Overview` dashboard
 
-- [docs/architecture.md](C:/Users/steve/Documents/DevsR/docs/architecture.md)
-- [docs/api-contract.md](C:/Users/steve/Documents/DevsR/docs/api-contract.md)
-- [docs/data-model.md](C:/Users/steve/Documents/DevsR/docs/data-model.md)
-- [docs/roadmap.md](C:/Users/steve/Documents/DevsR/docs/roadmap.md)
-- [infra/README.md](C:/Users/steve/Documents/DevsR/infra/README.md)
-- [backend/README.md](C:/Users/steve/Documents/DevsR/backend/README.md)
-- [frontend/README.md](C:/Users/steve/Documents/DevsR/frontend/README.md)
-- [simulator/README.md](C:/Users/steve/Documents/DevsR/simulator/README.md)
+The current baseline focuses on application-level signals:
+
+- backend counters for events, requests, and error conditions
+- backend request duration histograms used for overall p95 latency
+- structured logs from the backend and simulator
+
+Current scope does not include host or container resource metrics such as CPU, memory, disk, or network usage.
+
+Grafana credentials come from the root `.env` file:
+
+- `GRAFANA_ADMIN_USER`
+- `GRAFANA_ADMIN_PASSWORD`
+
+If the `grafana_data` volume already exists, changing those values later will not reset the saved admin password automatically.
 
 ## CI Pipeline
 
-The repository includes a GitHub Actions workflow at [ci.yml](C:/Users/steve/Documents/DevsR/.github/workflows/ci.yml).
+The repository includes a GitHub Actions workflow at [.github/workflows/ci.yml](.github/workflows/ci.yml).
 
 Implemented checks:
 
@@ -172,6 +160,58 @@ Recommended branch protection for `main`:
    - `docker-build`
 4. Optionally require branches to be up to date before merging.
 
+## Repository Structure
+
+```text
+SimOps/
+  backend/
+    app/
+    alembic/
+    tests/
+    Dockerfile
+    README.md
+  frontend/
+    public/
+    src/
+    Dockerfile
+    nginx.conf
+    README.md
+  simulator/
+    app/
+    tests/
+    Dockerfile
+    README.md
+  infra/
+    prometheus/
+    grafana/
+    loki/
+    promtail/
+    README.md
+  docs/
+    architecture.md
+    api-contract.md
+    data-model.md
+    roadmap.md
+  .github/
+    workflows/
+      ci.yml
+  docker-compose.yml
+  .env.example
+  .env.prod.example
+  README.md
+```
+
+## Documentation
+
+- [docs/architecture.md](docs/architecture.md)
+- [docs/api-contract.md](docs/api-contract.md)
+- [docs/data-model.md](docs/data-model.md)
+- [docs/roadmap.md](docs/roadmap.md)
+- [infra/README.md](infra/README.md)
+- [backend/README.md](backend/README.md)
+- [frontend/README.md](frontend/README.md)
+- [simulator/README.md](simulator/README.md)
+
 ## Hardening Notes
 
 The current baseline includes:
@@ -189,10 +229,9 @@ Before any shared or internet-exposed deployment, change at least:
 - `GRAFANA_ADMIN_PASSWORD`
 - `SIMOPS_ALLOWED_HOSTS`
 
-## Next Steps
+## Near-Term Improvements
 
-- deploy the stack to a small VM or VPS with Docker Compose
+- deploy the stack to a small VM or on-demand cloud environment
 - add a reverse proxy and TLS for public access
-
-
-
+- separate database migrations from the backend startup command
+- expand observability with alerts and host or container resource metrics
