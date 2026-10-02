@@ -1,38 +1,16 @@
 # SimOps
 
-[![CI](https://github.com/Pizofh/SimOps/actions/workflows/ci.yml/badge.svg)](https://github.com/Pizofh/SimOps/actions/workflows/ci.yml)
-
-**An observable operations lab for exploring event ingestion, service health, and delivery quality.**
-
-SimOps brings together a FastAPI API, a Vue interface, a traffic simulator, PostgreSQL, and a provisioned observability stack. It is a DevOps portfolio project built to make the complete application lifecycle easy to inspect: start the services, generate operational events, query the API, and follow metrics and logs in Grafana.
-
-## Engineering Highlights
-
-| Capability | Implementation | Why it matters |
-| --- | --- | --- |
-| Reproducible environments | Docker Compose with service health checks and persistent volumes | A documented starting point for running the same stack locally |
-| Operational visibility | Prometheus metrics, structured logs, Loki, and provisioned Grafana dashboards | Inspect request rates, latency, errors, and application logs together |
-| Delivery validation | GitHub Actions with linting, tests, security checks, and image builds | Validate application quality and container configuration on changes |
-| Database lifecycle | PostgreSQL and versioned Alembic migrations | Keep schema changes explicit and repeatable |
-| Runtime configuration | Environment settings and frontend runtime API configuration | Change deployment settings without rebuilding the frontend |
-| Container hardening | Non-root backend and simulator, read-only filesystems, and log rotation | Apply practical operational controls to a small service stack |
+SimOps is a lightweight operational event ingestion platform built as a DevOps portfolio project. It focuses on reproducible local environments, service separation, migrations, CI, and application-level observability without overengineering the business domain.
 
 ## Runtime Topology
 
-```mermaid
-flowchart TD
-    UI["Vue frontend / Nginx"] --> API["FastAPI backend"]
-    SIM["Python event simulator"] --> API
-    API --> DB["PostgreSQL"]
-    API -->|"Metrics"| PROM["Prometheus"]
-    API -->|"Structured logs"| COL["Promtail"]
-    SIM -->|"Structured logs"| COL
-    COL --> LOKI["Loki"]
-    PROM --> GRAF["Grafana"]
-    LOKI --> GRAF
+```text
+frontend  -> backend -> postgres
+simulator -> backend
+backend /metrics -> prometheus -> grafana
+backend logs ----> promtail -> loki ------> grafana
+simulator logs --> promtail -> loki ------> grafana
 ```
-
-The simulator generates operational event records, including simulated failures and bursts. These records are distinct from actual failures of the running API.
 
 ## What The Project Includes
 
@@ -57,12 +35,9 @@ The simulator generates operational event records, including simulated failures 
 
 ## Quick Start
 
-Requirements: Git, Docker, and Docker Compose.
+Copy `.env.example` to `.env` in the repository root, then start the stack:
 
 ```bash
-git clone https://github.com/Pizofh/SimOps.git
-cd SimOps
-cp .env.example .env
 docker compose up --build
 ```
 
@@ -82,14 +57,6 @@ docker compose down
 ```
 
 The frontend calls the backend through the browser, and the simulator continuously sends events into the API.
-
-## Five-Minute Walkthrough
-
-1. Open the frontend at `http://localhost:8080` and browse the events produced by the simulator.
-2. Check `http://localhost:8000/health` and `http://localhost:8000/ready` to inspect application health and database readiness.
-3. Sign in to Grafana at `http://localhost:3000` using the credentials configured in `.env`, then open the provisioned **SimOps Overview** dashboard.
-4. Compare request activity and p95 request latency with backend and simulator logs in Grafana Explore.
-5. Change `SIMULATOR_INTERVAL_SECONDS` or `SIMULATOR_BURST_RATE` in `.env`, run `docker compose up -d simulator`, and observe how traffic changes.
 
 ## Configuration
 
@@ -195,21 +162,51 @@ Recommended branch protection for `main`:
 
 ## Repository Structure
 
-| Path | Responsibility |
-| --- | --- |
-| `backend/` | FastAPI application, database migrations, and backend tests |
-| `frontend/` | Vue interface, runtime configuration, and Nginx serving |
-| `simulator/` | Configurable operational event generator and its tests |
-| `infra/` | Prometheus, Grafana, Loki, and Promtail configuration |
-| `docs/` | Architecture, API contract, and data model |
-| `.github/workflows/ci.yml` | Quality, security, and container validation |
-| `docker-compose.yml` | Service definitions, health checks, networking, and volumes |
+```text
+SimOps/
+  backend/
+    app/
+    alembic/
+    tests/
+    Dockerfile
+    README.md
+  frontend/
+    public/
+    src/
+    Dockerfile
+    nginx.conf
+    README.md
+  simulator/
+    app/
+    tests/
+    Dockerfile
+    README.md
+  infra/
+    prometheus/
+    grafana/
+    loki/
+    promtail/
+    README.md
+  docs/
+    architecture.md
+    api-contract.md
+    data-model.md
+    roadmap.md
+  .github/
+    workflows/
+      ci.yml
+  docker-compose.yml
+  .env.example
+  .env.prod.example
+  README.md
+```
 
 ## Documentation
 
 - [docs/architecture.md](docs/architecture.md)
 - [docs/api-contract.md](docs/api-contract.md)
 - [docs/data-model.md](docs/data-model.md)
+- [docs/roadmap.md](docs/roadmap.md)
 - [infra/README.md](infra/README.md)
 - [backend/README.md](backend/README.md)
 - [frontend/README.md](frontend/README.md)
