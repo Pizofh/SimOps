@@ -13,11 +13,7 @@ This directory contains the local observability configuration used by the Docker
 
 ## Runtime Flow
 
-```text
-backend /metrics -> prometheus -> grafana
-backend logs ----> promtail -> loki ------> grafana
-simulator logs --> promtail -> loki ------> grafana
-```
+See the observability section of the [architecture diagram](../docs/diagrams/architecture.png) and the [architecture documentation](../docs/architecture.md).
 
 ## Default Access
 

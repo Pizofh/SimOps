@@ -156,7 +156,7 @@
       },
       "targets": [
         {
-          "expr": "sum by (severity) (rate(total_events_by_severity[5m]))",
+          "expr": "sum by (severity) (rate(total_events_by_severity_total[5m]))",
           "legendFormat": "{{severity}}",
           "refId": "A"
         }

@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1520" height="1480" viewBox="0 0 1520 1480" role="img" aria-labelledby="title description">
+<title id="title">SimOps: arquitectura del laboratorio</title><desc id="description">Aplicación y observabilidad en Docker Compose. El navegador consulta la API; el simulador escribe eventos en PostgreSQL mediante FastAPI. Prometheus obtiene métricas, Promtail lee logs y Grafana consulta Prometheus y Loki.</desc><rect width="100%" height="100%" fill="white"/>
+<text x="72" y="100.4" font-family="Segoe UI, Arial, sans-serif" font-size="48" font-weight="600" fill="#172B4D" text-anchor="start">SimOps</text>
+<text x="72" y="138.3" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="400" fill="#53657B" text-anchor="start">Arquitectura del laboratorio de incidentes</text>
+<polyline points="1080,72 1125,72" fill="none" stroke="#2563EB" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1125,72 1112,78 1112,66" fill="#2563EB"/>
+<text x="1140" y="78" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#2563EB" text-anchor="start">Peticiones / datos</text>
+<polyline points="1080,111 1125,111" fill="none" stroke="#A56808" stroke-width="3" stroke-linejoin="round" stroke-dasharray="9 9"/>
+<polygon points="1125,111 1112,117 1112,105" fill="#A56808"/>
+<text x="1140" y="117" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#A56808" text-anchor="start">Métricas</text>
+<polyline points="1080,150 1125,150" fill="none" stroke="#8050B5" stroke-width="3" stroke-linejoin="round" stroke-dasharray="9 9"/>
+<polygon points="1125,150 1112,156 1112,144" fill="#8050B5"/>
+<text x="1140" y="156" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#8050B5" text-anchor="start">Logs</text>
+<rect x="48" y="378" width="1424" height="1040" rx="24" fill="#F8FAFC" stroke="#CCD8E5" stroke-width="2"/>
+<text x="348" y="415" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="600" fill="#172B4D" text-anchor="start">DOCKER COMPOSE</text>
+<text x="580" y="415" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Red interna</text>
+<rect x="76" y="424" width="1368" height="450" rx="18" fill="#EFF6FF" stroke="#DEE9F8" stroke-width="2"/>
+<rect x="76" y="920" width="1368" height="474" rx="18" fill="#F6F3FA" stroke="#E5DEEE" stroke-width="2"/>
+<text x="322" y="951" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="600" fill="#53657B" text-anchor="start">OBSERVABILIDAD</text>
+<polyline points="560,270 250,270 250,430" fill="none" stroke="#2563EB" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="250,430 244,417 256,417" fill="#2563EB"/>
+<text x="280" y="359" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#2563EB" text-anchor="start">Carga la interfaz</text>
+<polyline points="760,340 760,430" fill="none" stroke="#2563EB" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="760,430 754,417 766,417" fill="#2563EB"/>
+<text x="786" y="367" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#2563EB" text-anchor="start">GET /events</text>
+<polyline points="960,270 1454,270 1454,1225 1410,1225" fill="none" stroke="#172B4D" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1410,1225 1423,1219 1423,1231" fill="#172B4D"/>
+<text x="1100" y="320" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#172B4D" text-anchor="start">Abre dashboards</text>
+<polyline points="960,500 1110,500" fill="none" stroke="#2563EB" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1110,500 1097,506 1097,494" fill="#2563EB"/>
+<text x="1035" y="483" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#2563EB" text-anchor="middle">SQL</text>
+<polyline points="760,710 760,570" fill="none" stroke="#2563EB" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="760,570 766,583 754,583" fill="#2563EB"/>
+<text x="786" y="650.05" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="400" fill="#2563EB" text-anchor="start">POST /events</text>
+<text x="786" y="678.9" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#53657B" text-anchor="start">X-Request-ID</text>
+<polyline points="1260,570 1260,606" fill="none" stroke="#91A3B8" stroke-width="2" stroke-linejoin="round"/>
+<polyline points="250,1155 250,904 480,904 480,535 560,535" fill="none" stroke="#A56808" stroke-width="3" stroke-linejoin="round" stroke-dasharray="9 9"/>
+<polygon points="560,535 547,541 547,529" fill="#A56808"/>
+<text x="100" y="898" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#A56808" text-anchor="start">GET /metrics · cada 15 s</text>
+<polyline points="960,1040 1030,1040 1030,610 900,610 900,570" fill="none" stroke="#8050B5" stroke-width="3" stroke-linejoin="round" stroke-dasharray="9 9"/>
+<polygon points="900,570 906,583 894,583" fill="#8050B5"/>
+<polyline points="1030,780 960,780" fill="none" stroke="#8050B5" stroke-width="3" stroke-linejoin="round" stroke-dasharray="9 9"/>
+<polygon points="960,780 973,774 973,786" fill="#8050B5"/>
+<text x="1060" y="850.05" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="400" fill="#8050B5" text-anchor="start">Lee logs Docker</text>
+<text x="1060" y="879.9" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#53657B" text-anchor="start">/var/run/docker.sock</text>
+<polyline points="760,1110 760,1155" fill="none" stroke="#8050B5" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="760,1155 754,1142 766,1142" fill="#8050B5"/>
+<text x="788" y="1140.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#8050B5" text-anchor="start">Envía logs</text>
+<polyline points="1110,1225 960,1225" fill="none" stroke="#8050B5" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="960,1225 973,1219 973,1231" fill="#8050B5"/>
+<text x="1035" y="1203.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#8050B5" text-anchor="middle">LogQL</text>
+<polyline points="1260,1295 1260,1352 250,1352 250,1295" fill="none" stroke="#A56808" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="250,1295 256,1308 244,1308" fill="#A56808"/>
+<text x="760" y="1380.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#A56808" text-anchor="middle">PromQL · consulta métricas</text>
+<rect x="560" y="200" width="400" height="140" rx="16" fill="#FFFFFF" stroke="#172B4D" stroke-width="2"/>
+<rect x="582" y="228" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#172B4D" stroke-width="2"/>
+<polyline points="582,237 622,237" fill="none" stroke="#172B4D" stroke-width="2" stroke-linejoin="round"/>
+<text x="588" y="254.8" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="600" fill="#172B4D" text-anchor="start">&lt;/&gt;</text>
+<text x="640" y="249.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">Navegador</text>
+<text x="640" y="285" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Operador del laboratorio</text>
+<text x="640" y="319.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#172B4D" text-anchor="start">Fuera de la red de Docker</text>
+<rect x="100" y="430" width="300" height="140" rx="16" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<rect x="122" y="458" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<polyline points="122,467 162,467" fill="none" stroke="#2563EB" stroke-width="2" stroke-linejoin="round"/>
+<text x="128" y="484.8" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="600" fill="#2563EB" text-anchor="start">&lt;/&gt;</text>
+<text x="180" y="479.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">Frontend</text>
+<text x="180" y="515" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Vue + Nginx</text>
+<text x="180" y="549.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#2563EB" text-anchor="start">localhost:8080 → :80</text>
+<rect x="560" y="430" width="400" height="140" rx="16" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="582" y="485.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#2563EB" text-anchor="start">&lt;/&gt;</text>
+<text x="640" y="479.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">Backend</text>
+<text x="640" y="515" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">FastAPI + SQLAlchemy</text>
+<text x="640" y="549.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#2563EB" text-anchor="start">localhost:8000 · /events</text>
+<rect x="1110" y="430" width="300" height="140" rx="16" fill="#FFFFFF" stroke="#087E8B" stroke-width="2"/>
+<rect x="1132" y="458" width="40" height="40" rx="8" fill="#FFFFFF" stroke="#087E8B" stroke-width="2"/>
+<polyline points="1132,471 1172,471" fill="none" stroke="#087E8B" stroke-width="2" stroke-linejoin="round"/>
+<polyline points="1132,484 1172,484" fill="none" stroke="#087E8B" stroke-width="2" stroke-linejoin="round"/>
+<text x="1190" y="479.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">PostgreSQL</text>
+<text x="1190" y="515" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Servicio: db</text>
+<text x="1190" y="549.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#087E8B" text-anchor="start">localhost:5434 → :5432</text>
+<rect x="1110" y="606" width="300" height="60" rx="10" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="1260" y="642.9" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#53657B" text-anchor="middle">Volumen: postgres_data</text>
+<rect x="560" y="710" width="400" height="140" rx="16" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="582" y="765.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#2563EB" text-anchor="start">&lt;/&gt;</text>
+<text x="640" y="759.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">Simulador</text>
+<text x="640" y="795" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Python + HTTPX</text>
+<text x="640" y="829.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#2563EB" text-anchor="start">Genera eventos sintéticos</text>
+<text x="116" y="759" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="600" fill="#2563EB" text-anchor="start">APLICACIÓN</text>
+<text x="116" y="797.05" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="400" fill="#53657B" text-anchor="start">Consulta, ingesta</text>
+<text x="116" y="829.05" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="400" fill="#53657B" text-anchor="start">y persistencia de eventos</text>
+<rect x="560" y="970" width="400" height="140" rx="16" fill="#FFFFFF" stroke="#8050B5" stroke-width="2"/>
+<rect x="586" y="998" width="32" height="40" rx="4" fill="#FFFFFF" stroke="#8050B5" stroke-width="2"/>
+<polyline points="593,1009 611,1009" fill="none" stroke="#8050B5" stroke-width="2" stroke-linejoin="round"/>
+<polyline points="593,1018 611,1018" fill="none" stroke="#8050B5" stroke-width="2" stroke-linejoin="round"/>
+<polyline points="593,1027 611,1027" fill="none" stroke="#8050B5" stroke-width="2" stroke-linejoin="round"/>
+<text x="640" y="1019.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">Promtail</text>
+<text x="640" y="1055" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Recolector de logs</text>
+<text x="640" y="1089.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#8050B5" text-anchor="start">Lee backend y simulador</text>
+<rect x="100" y="1155" width="300" height="140" rx="16" fill="#FFFFFF" stroke="#A56808" stroke-width="2"/>
+<rect x="122" y="1207" width="8" height="16" rx="0" fill="#A56808" stroke="#A56808" stroke-width="2"/>
+<rect x="137" y="1195" width="8" height="28" rx="0" fill="#A56808" stroke="#A56808" stroke-width="2"/>
+<rect x="152" y="1183" width="8" height="40" rx="0" fill="#A56808" stroke="#A56808" stroke-width="2"/>
+<text x="180" y="1204.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">Prometheus</text>
+<text x="180" y="1240" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Métricas / PromQL</text>
+<text x="180" y="1274.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#A56808" text-anchor="start">localhost:9090</text>
+<rect x="560" y="1155" width="400" height="140" rx="16" fill="#FFFFFF" stroke="#8050B5" stroke-width="2"/>
+<rect x="586" y="1183" width="32" height="40" rx="4" fill="#FFFFFF" stroke="#8050B5" stroke-width="2"/>
+<polyline points="593,1194 611,1194" fill="none" stroke="#8050B5" stroke-width="2" stroke-linejoin="round"/>
+<polyline points="593,1203 611,1203" fill="none" stroke="#8050B5" stroke-width="2" stroke-linejoin="round"/>
+<polyline points="593,1212 611,1212" fill="none" stroke="#8050B5" stroke-width="2" stroke-linejoin="round"/>
+<text x="640" y="1204.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">Loki</text>
+<text x="640" y="1240" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Almacén de logs / LogQL</text>
+<text x="640" y="1274.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#8050B5" text-anchor="start">localhost:3100</text>
+<rect x="1110" y="1155" width="300" height="140" rx="16" fill="#FFFFFF" stroke="#087E8B" stroke-width="2"/>
+<rect x="1132" y="1207" width="8" height="16" rx="0" fill="#087E8B" stroke="#087E8B" stroke-width="2"/>
+<rect x="1147" y="1195" width="8" height="28" rx="0" fill="#087E8B" stroke="#087E8B" stroke-width="2"/>
+<rect x="1162" y="1183" width="8" height="40" rx="0" fill="#087E8B" stroke="#087E8B" stroke-width="2"/>
+<text x="1190" y="1204.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">Grafana</text>
+<text x="1190" y="1240" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Dashboards / Explore</text>
+<text x="1190" y="1274.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#087E8B" text-anchor="start">localhost:3000</text>
+<text x="330" y="1326.85" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="400" fill="#53657B" text-anchor="middle">prometheus_data</text>
+<text x="760" y="1326.85" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="400" fill="#53657B" text-anchor="middle">loki_data</text>
+<text x="1332" y="1326.85" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="400" fill="#53657B" text-anchor="middle">grafana_data</text>
+<text x="76" y="1455" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Puertos locales por defecto. Nginx sirve la SPA; el navegador llama directamente a la API.</text>
+</svg>

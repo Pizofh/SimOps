@@ -22,4 +22,5 @@ grafana-data/
 postgres-data/
 prometheus-data/
 loki-data/
+artifacts/lab/
 context

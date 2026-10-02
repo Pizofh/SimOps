@@ -131,8 +131,8 @@ Exposes Prometheus-compatible metrics.
 
 ### Current metric names
 
-- `total_events_received`
-- `total_events_by_severity`
+- `total_events_received_total`
+- `total_events_by_severity_total`
 - `http_requests_total`
 - `http_request_duration_seconds`
 - `backend_up`

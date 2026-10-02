@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1120" viewBox="0 0 1400 1120" role="img" aria-labelledby="title description">
+<title id="title">SimOps: recorrido de un evento</title><desc id="description">Secuencia: el simulador envía un evento, FastAPI valida y persiste en PostgreSQL, registra métricas y responde 201. La observabilidad recoge señales de forma independiente. Los envíos fallidos no se reintentan.</desc><rect width="100%" height="100%" fill="white"/>
+<text x="72" y="94.2" font-family="Segoe UI, Arial, sans-serif" font-size="44" font-weight="600" fill="#172B4D" text-anchor="start">Recorrido de un evento</text>
+<text x="72" y="137.2" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="400" fill="#53657B" text-anchor="start">Desde el simulador hasta la persistencia y la respuesta HTTP</text>
+<rect x="100" y="184" width="300" height="140" rx="16" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="122" y="239.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#2563EB" text-anchor="start">&lt;/&gt;</text>
+<text x="180" y="233.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">Simulador</text>
+<text x="180" y="269" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Python + HTTPX</text>
+<text x="180" y="303.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#2563EB" text-anchor="start">Productor</text>
+<rect x="550" y="184" width="300" height="140" rx="16" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="572" y="239.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#2563EB" text-anchor="start">&lt;/&gt;</text>
+<text x="630" y="233.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">Backend</text>
+<text x="630" y="269" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">FastAPI</text>
+<text x="630" y="303.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#2563EB" text-anchor="start">API de eventos</text>
+<rect x="1000" y="184" width="300" height="140" rx="16" fill="#FFFFFF" stroke="#087E8B" stroke-width="2"/>
+<rect x="1022" y="212" width="40" height="40" rx="8" fill="#FFFFFF" stroke="#087E8B" stroke-width="2"/>
+<polyline points="1022,225 1062,225" fill="none" stroke="#087E8B" stroke-width="2" stroke-linejoin="round"/>
+<polyline points="1022,238 1062,238" fill="none" stroke="#087E8B" stroke-width="2" stroke-linejoin="round"/>
+<text x="1080" y="233.4" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#172B4D" text-anchor="start">PostgreSQL</text>
+<text x="1080" y="269" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400" fill="#53657B" text-anchor="start">Servicio: db</text>
+<text x="1080" y="303.95" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="400" fill="#087E8B" text-anchor="start">Persistencia</text>
+<polyline points="250,324 250,822" fill="none" stroke="#C1CEDC" stroke-width="2" stroke-linejoin="round" stroke-dasharray="9 9"/>
+<polyline points="700,324 700,822" fill="none" stroke="#C1CEDC" stroke-width="2" stroke-linejoin="round" stroke-dasharray="9 9"/>
+<polyline points="1150,324 1150,822" fill="none" stroke="#C1CEDC" stroke-width="2" stroke-linejoin="round" stroke-dasharray="9 9"/>
+<polyline points="250,382 700,382" fill="none" stroke="#2563EB" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="700,382 687,388 687,376" fill="#2563EB"/>
+<text x="475" y="365.1" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#2563EB" text-anchor="middle">1. POST /events + X-Request-ID</text>
+<rect x="562" y="419" width="276" height="52" rx="10" fill="#EFF6FF" stroke="#C7DAF7" stroke-width="2"/>
+<text x="700" y="456.1" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#172B4D" text-anchor="middle">2. Validar payload</text>
+<polyline points="700,525 1150,525" fill="none" stroke="#2563EB" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1150,525 1137,531 1137,519" fill="#2563EB"/>
+<text x="925" y="508.1" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#2563EB" text-anchor="middle">3. INSERT + COMMIT + SELECT</text>
+<polyline points="1150,598 700,598" fill="none" stroke="#087E8B" stroke-width="3" stroke-linejoin="round" stroke-dasharray="9 9"/>
+<polygon points="700,598 713,592 713,604" fill="#087E8B"/>
+<text x="925" y="581.1" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#087E8B" text-anchor="middle">4. Evento persistido</text>
+<rect x="513" y="633" width="374" height="62" rx="10" fill="#F6F3FA" stroke="#DFD3EE" stroke-width="2"/>
+<text x="700" y="667.1" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#8050B5" text-anchor="middle">5. Contadores + event_ingested</text>
+<polyline points="700,750 250,750" fill="none" stroke="#2563EB" stroke-width="3" stroke-linejoin="round" stroke-dasharray="9 9"/>
+<polygon points="250,750 263,744 263,756" fill="#2563EB"/>
+<text x="475" y="732.1" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#2563EB" text-anchor="middle">6. HTTP 201 + id del evento</text>
+<rect x="105" y="786" width="290" height="54" rx="10" fill="#EFF6FF" stroke="#C7DAF7" stroke-width="2"/>
+<text x="250" y="822.05" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="400" fill="#172B4D" text-anchor="middle">7. Log: event_delivered</text>
+<rect x="72" y="880" width="1256" height="86" rx="16" fill="#F8FAFC" stroke="#D5DFEA" stroke-width="2"/>
+<text x="100" y="919.15" font-family="Segoe UI, Arial, sans-serif" font-size="23" font-weight="600" fill="#172B4D" text-anchor="start">Observabilidad independiente</text>
+<text x="100" y="953.05" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="400" fill="#53657B" text-anchor="start">Prometheus lee /metrics cada 15 s. Promtail recoge los logs del backend y del simulador.</text>
+<rect x="72" y="992" width="1256" height="88" rx="16" fill="#FFFAED" stroke="#E8D9AD" stroke-width="2"/>
+<text x="100" y="1029.15" font-family="Segoe UI, Arial, sans-serif" font-size="23" font-weight="600" fill="#A56808" text-anchor="start">Si falla la entrega</text>
+<text x="100" y="1063.05" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="400" fill="#172B4D" text-anchor="start">El simulador registra el fallo y descarta el envío. No hay cola ni reintentos de aplicación.</text>
+</svg>

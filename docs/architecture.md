@@ -1,132 +1,64 @@
-# SimOps Architecture
+# Arquitectura de SimOps
 
-## Overview
+SimOps es un laboratorio local de ingesta de eventos. Esta vista describe los servicios y conexiones que existen en [docker-compose.yml](../docker-compose.yml).
 
-SimOps is a small event ingestion platform intended to showcase practical DevOps foundations: separated services, reproducible local environments, environment-based configuration, migrations, metrics exposure, and clear documentation.
+## Diagrama de componentes
 
-## Current Implementation
+Azul: peticiones y datos. Ocre: métricas. Morado: logs. Las flechas indican quién inicia la solicitud o lectura; los puertos son los valores locales por defecto.
 
-The following components are implemented and wired together locally:
+![Diagrama de la arquitectura de SimOps con los servicios de aplicación y observabilidad](diagrams/architecture.png)
 
-- PostgreSQL through Docker Compose
-- FastAPI backend for event ingestion and querying
-- standalone Python simulator for traffic generation
-- Vue 3 frontend for browsing events
-- Prometheus for metrics scraping
-- Loki for centralized log storage
-- Promtail for Docker log collection
-- Grafana for dashboards and log exploration
+[Abrir o descargar la versión SVG ampliable](diagrams/architecture.svg).
 
-## Current Runtime Topology
+El JavaScript del navegador llama directamente al backend. Nginx sirve la SPA y su configuración de runtime; no actúa como proxy de la API. `SIMOPS_API_BASE_URL` debe ser una URL accesible desde el navegador, mientras que el simulador usa `http://backend:8000/events` dentro de Docker.
 
-```text
-frontend  -> backend -> postgres
-simulator -> backend
-backend /metrics -> prometheus -> grafana
-backend logs ----> promtail -> loki ------> grafana
-simulator logs --> promtail -> loki ------> grafana
-```
+`payments-api`, `auth-api` e `inventory-worker` son etiquetas de eventos generados, no contenedores adicionales ni dependencias reales.
 
-## Components
+## Recorrido de una escritura
 
-## Frontend
+![Recorrido de un evento: envío, validación, persistencia, métricas y respuesta](diagrams/event-flow.png)
 
-Status: implemented
+[Abrir o descargar el flujo en SVG](diagrams/event-flow.svg). Leer de arriba hacia abajo; las flechas discontinuas entre servicios representan respuestas.
 
-- Vue 3 + Vite
-- event list
-- simple filters
-- detail panel
-- periodic polling
-- security headers served by Nginx
+La API valida antes de persistir y cuenta eventos después del commit. Si se pierde la respuesta después del commit, el cliente puede registrar un fallo aunque el evento exista; no hay clave de idempotencia para resolver esa ambigüedad. Los contadores del backend se reinician al reiniciar su proceso; los datos de PostgreSQL permanecen en el volumen.
 
-## Backend
+## Salud y dependencias
 
-Status: implemented
+| Señal | Qué verifica | Qué puede pasar por alto |
+| --- | --- | --- |
+| Backend `/health` | El proceso responde | Base de datos, esquema, escritura y flujo de eventos |
+| Backend `/ready` | Puede ejecutar `SELECT 1` en PostgreSQL | Migraciones, permisos de escritura y generación de eventos |
+| Frontend `/health` | Nginx responde | Conectividad del navegador con la API y CORS |
+| Prometheus `up{job="simops-backend"}` | El scraper puede leer `/metrics` | Estado de la base de datos |
+| `backend_up` | El proceso ha iniciado | Disponibilidad desde fuera; no se puede recolectar cuando está caído |
+| Eventos nuevos + `event_delivered` | El flujo de ingesta está activo | Entrega garantizada de todos los eventos |
 
-- FastAPI monolith
-- SQLAlchemy ORM
-- Alembic migrations
-- structured JSON logging
-- health, readiness, and metrics endpoints
-- CORS enabled for local frontend development
-- trusted host validation
-- common security response headers
+Compose espera al healthcheck de PostgreSQL para arrancar el backend. Su comando ejecuta `alembic upgrade head` antes de Uvicorn. Frontend, simulador y Prometheus esperan el healthcheck del backend, que usa **`/health`, no `/ready`**. `depends_on` ordena el arranque; no detiene las aplicaciones dependientes cuando cae la base de datos. `restart: unless-stopped` no revive un contenedor detenido explícitamente con `docker compose stop` ni reinicia por sí solo un contenedor marcado como unhealthy.
 
-## PostgreSQL
+## Superficies para experimentar
 
-Status: implemented
+| Componente detenido | Impacto esperado | Señal útil | Recuperación |
+| --- | --- | --- | --- |
+| `db` | Lecturas/escrituras fallan; proceso API sigue vivo | `/ready` 503, HTTP 5xx, `event_persist_failed` | `docker compose start db` |
+| `backend` | Sin consulta ni ingesta | Fallos de conexión, `up` 0, `event_delivery_failed` | `docker compose start backend` |
+| `simulator` | API disponible, sin nuevos eventos automáticos | Tasa de ingesta cae; consultas siguen funcionando | `docker compose start simulator` |
+| `promtail` | Servicio disponible, recolección de logs interrumpida | Logs Docker avanzan mientras Loki deja de recibirlos | `docker compose start promtail` |
 
-- Docker Compose managed
-- persistent volume
-- health check enabled
-- used by both local and containerized backend flows
+Los procedimientos y criterios de recuperación están en [el laboratorio de incidentes](lab.md).
 
-## Simulator
+## Límites de la base actual
 
-Status: implemented
+- Una instancia por servicio y una sola base de datos; sin alta disponibilidad.
+- Sin cola, reintentos de aplicación, DLQ ni idempotencia en la ingesta.
+- Métricas de aplicación; no hay exporters de PostgreSQL, host o recursos de contenedores.
+- Sin alertas automáticas ni sondeo externo de `/ready`; la detección inicial es manual.
+- `errors_total` combina categorías de eventos sintéticos y fallos de infraestructura. No es un contador exclusivo de HTTP 5xx.
+- Promtail recoge únicamente backend y simulador. Sus posiciones viven en `/tmp`, sin volumen persistente; comprobar posibles huecos o duplicados después de reiniciarlo.
+- Volúmenes locales persistentes para PostgreSQL, Prometheus, Loki y Grafana; no hay procedimiento de backup/restauración implementado.
+- Imágenes de observabilidad con tag `latest`; registrar versiones o digests al comparar ejercicios entre máquinas.
 
-- separate Python workload generator
-- random failures
-- burst generation
-- configurable intervals and latency
+Estas limitaciones sirven como punto de partida para mejoras después de reunir evidencia en los ejercicios.
 
-## Observability
+## Editar los dibujos
 
-Status: implemented
-
-- Prometheus
-- Loki
-- Promtail
-- Grafana
-- starter dashboard provisioning
-- backend metrics scraping
-- backend and simulator log collection via Docker discovery
-
-## Key Design Decisions
-
-## 1. Backend monolith first
-
-A single backend keeps the system explainable and avoids premature service fragmentation while still covering API design, persistence, metrics, and operational endpoints.
-
-## 2. Separate simulator
-
-The simulator represents an external event source rather than an internal helper. This makes the architecture more realistic and demonstrates inter-service communication.
-
-## 3. Compose-first local platform
-
-Docker Compose is now the canonical local entry point for the application stack. This reduces host drift and makes the project easier to run, demo, and extend.
-
-## 4. Runtime configuration where it matters
-
-The frontend uses a runtime-generated `config.js` inside the container so that the API base URL can be changed without rebuilding the image. This is a practical pattern for real deployments.
-
-## 5. Deployment-friendly structure without platform-first complexity
-
-The project is intentionally organized so it can move to a small VM or VPS deployment without major restructuring:
-
-- services are already separated
-- configuration is environment-based
-- readiness and health endpoints already exist
-- dashboards and scraper configuration are already externalized
-- the Compose topology maps cleanly to a reverse-proxy-based deployment
-
-## 6. Hardening before platform expansion
-
-The project favors a small but real hardening baseline before adding orchestration complexity:
-
-- restrict allowed host headers in the backend
-- use non-root users where practical
-- prefer read-only filesystems for simple stateless services
-- rotate Docker logs to avoid unbounded local growth
-- document which default credentials must be changed before deployment
-
-## Explicitly Out of Scope for the MVP
-
-- business microservices
-- message brokers
-- complex authentication
-- GitOps
-- Terraform-first provisioning
-- multi-tenant design
-
+Los SVG son la fuente editable de los dibujos y permiten ampliar sin perder definición. Para cambiar cajas, textos, conexiones o colores, editar el SVG correspondiente en `docs/diagrams/` y exportar su PNG con el mismo nombre. Los PNG se muestran directamente en el README y esta página.
