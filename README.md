@@ -204,9 +204,9 @@ SimOps/
 ## Documentation
 
 - [docs/architecture.md](docs/architecture.md)
+- [docs/operations-runbook.md](docs/operations-runbook.md) — service topology, diagnosis and recovery limitations
 - [docs/api-contract.md](docs/api-contract.md)
 - [docs/data-model.md](docs/data-model.md)
-- [docs/roadmap.md](docs/roadmap.md)
 - [infra/README.md](infra/README.md)
 - [backend/README.md](backend/README.md)
 - [frontend/README.md](frontend/README.md)
